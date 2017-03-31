@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/clMain"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/actipatient_new"
+    >
+
+        <RelativeLayout
+            android:id="@+id/rl1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center">
+
+            <RelativeLayout
+                android:id="@+id/rl2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true">
+
+                <TextView
+                    android:id="@+id/tvWelcome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="40dp"
+                    android:gravity="center"
+                    android:text="WELCOME \nTO \nACTIPATIENT"
+                    android:textColor="@color/purple"
+                    android:textSize="25dp"
+                    android:textStyle="bold|italic"/>
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/rl3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_vertical"
+                android:layout_toRightOf="@+id/rl2"
+            >
+
+                <TextView
+                    android:id="@+id/tvPleaseLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingLeft="8dp"
+                    android:text="PLEASE LOGIN"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                />
+
+                <TextView
+                    android:id="@+id/tvUsername"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvPleaseLogin"
+                    android:layout_marginTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:text="Username"
+                    android:textSize="15sp"/>
+
+                <EditText
+                    android:id="@+id/etUsername"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvUsername"
+                    android:ems="13"
+                    android:inputType="text"
+                    android:padding="8dp"
+                    android:textSize="15sp"
+                />
+
+                <TextView
+                    android:id="@+id/tvPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/etUsername"
+                    android:layout_marginTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:text="Password"
+                    android:textSize="15sp"
+                />
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/etUsername"
+                    android:layout_alignRight="@+id/etUsername"
+                    android:layout_below="@+id/tvPassword"
+                    android:inputType="textPassword"
+                    android:padding="8dp"
+                    android:textSize="15sp"
+                />
+
+                <TextView
+                    android:id="@+id/tvLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/etUsername"
+                    android:layout_alignRight="@+id/etUsername"
+                    android:layout_below="@+id/etPassword"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/purple"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="LOGIN"
+                    android:textColor="@color/text_color_white"
+                    android:textSize="15sp"
+                />
+
+                <TextView
+                    android:id="@+id/tvforgetPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvLogin"
+                    android:layout_marginTop="4dp"
+                    android:padding="4dp"
+                    android:text="forgot password?"
+                    android:textSize="10sp"/>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="85dp"
+            android:gravity="right"
+            android:padding="10dp"
+            android:text="powered by"
+            android:textColor="@color/text_color_black"
+            android:textSize="10sp"
+            android:textStyle="bold"
+
+        />
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="thanku">धन्यवाद! आपका फीडबैक हमारे लिए मूल्यवान है!</string>
+    <string name="welcome"> में आपका स्वागत है</string>
+    <string name="start">शुरू करें</string>
+    <string name="comment">क्या आप टिप्पणी देना चाहेगें?</string>
+    <string name="submit">सबमिट करें</string>
+    <string name="skip">छोड़ें</string>
+    <string name="logout">लोग आउट</string>
+    <string name="optional">वैकल्पिक</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="quit">क्या आप सर्वेक्षण छोड़ना चाहते हैं?</string>
+    <string name="yes">हाँ</string>
+    <string name="no">नहीं</string>
+
+
+
+</resources>

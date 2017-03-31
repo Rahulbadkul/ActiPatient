@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">ActiPatient</string>
+    <string name="thanku">Thank you! Your Feedback is valuable for us.</string>
+    <string name="welcome">Welcome To </string>
+    
+    <string name="start">START SURVEY</string>
+    <string name="skip">Skip</string>
+
+    <string name="comment">Would you like to Comment</string>
+
+    <string name="quit">Do you want to quit the survey?</string>
+
+    <string name="optional">Optional</string>
+    
+    <string name="submit">OK</string>
+        
+    <string name="cancel">CANCEL</string>
+    
+    <string name="logout">LOGOUT</string>
+
+    <string name="yes">YES</string>
+
+    <string name="no">NO</string>
+
+
+
+
+
+    <string-array name="category">
+        <item>In Patient</item>
+        <item>Out Patient</item>
+    </string-array>
+</resources>
