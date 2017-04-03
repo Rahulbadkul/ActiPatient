@@ -44,6 +44,7 @@ dependencies {
     compile 'com.afollestad.material-dialogs:commons:0.9.4.2'
     testCompile 'junit:junit:4.12'
 
+    compile 'com.bugsnag:bugsnag-android:3.+'
 
 
 }

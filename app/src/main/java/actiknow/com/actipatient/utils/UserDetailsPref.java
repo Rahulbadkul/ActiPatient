@@ -4,11 +4,9 @@ package actiknow.com.actipatient.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import static actiknow.com.actipatient.utils.AppConfigTags.SURVEY_TYPE;
-
 public class UserDetailsPref {
     public static String LANGUAGE = "language";
-    public static String SURVEY_TYPE = "survey_type";
+    public static String SURVEY_TYPE_ID = "survey_type_id";
     public static String DEVICE_ID = "device_id";
     public static String DEVICE_LOCATION = "device_location";
     public static String HOSPITAL_NAME = "hospital_name";

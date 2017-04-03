@@ -6,11 +6,9 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
     <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/actipatient_new"
-    >
+        android:background="@drawable/actipatient_new">
 
         <RelativeLayout
             android:id="@+id/rl1"

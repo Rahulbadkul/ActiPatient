@@ -1,20 +1,17 @@
 package actiknow.com.actipatient.model;
 
-import static android.R.attr.id;
-import static android.icu.text.RelativeDateTimeFormatter.Direction.THIS;
-
 /**
  * Created by actiknow on 3/27/17.
  */
 
 public class SurveyType {
     int survey_type_id;
-    String survey_type;
+    String survey_type_text;
     boolean survey_status;
 
-    public SurveyType(int survey_type_id, String survey_type, boolean survey_status) {
+    public SurveyType(int survey_type_id, String survey_type_text, boolean survey_status) {
         this.survey_type_id = survey_type_id;
-        this.survey_type = survey_type;
+        this.survey_type_text = survey_type_text;
         this.survey_status = survey_status;
     }
 
@@ -30,13 +27,14 @@ public class SurveyType {
         this.survey_type_id = survey_type_id;
     }
 
-    public String getSurvey_type() {
-        return survey_type;
+    public String getSurvey_type_text () {
+        return survey_type_text;
     }
 
-    public void setSurvey_type(String survey_type) {
-        this.survey_type = survey_type;
+    public void setSurvey_type_text (String survey_type_text) {
+        this.survey_type_text = survey_type_text;
     }
+
 
     public boolean isSurvey_status() {
         return survey_status;

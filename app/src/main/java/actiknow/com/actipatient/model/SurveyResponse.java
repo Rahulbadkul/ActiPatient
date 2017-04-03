@@ -1,38 +1,40 @@
 package actiknow.com.actipatient.model;
-
-import android.util.Log;
-
-/**
- * Created by actiknow on 3/16/17.
- */
-
 public class SurveyResponse {
-    int id;
-    String response;
+    int question_id;
+    int option_id;
+    int question_category_id;
 
-
-    public SurveyResponse(int id, String response){
-        this.id = id;
-        this.response = response;
+    public SurveyResponse (int question_id, int option_id, int question_category_id){
+        this.question_id = question_id;
+        this.option_id = option_id;
+        this.question_category_id = question_category_id;
     }
 
-    public SurveyResponse() {
+    public SurveyResponse () {
 
     }
 
-    public int getId() {
-        return id;
+    public int getQuestion_id() {
+        return question_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setQuestion_id(int question_id) {
+        this.question_id = question_id;
     }
 
-    public String getResponse() {
-        return response;
+    public int getOption_id () {
+        return option_id;
     }
 
-    public void setResponse(String response) {
-        this.response = response;
+    public void setOption_id (int option_id) {
+        this.option_id = option_id;
+    }
+
+    public int getQuestion_category_id () {
+        return question_category_id;
+    }
+
+    public void setQuestion_category_id (int question_category_id) {
+        this.question_category_id = question_category_id;
     }
 }

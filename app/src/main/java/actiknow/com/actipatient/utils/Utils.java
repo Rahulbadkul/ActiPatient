@@ -2,6 +2,7 @@ package actiknow.com.actipatient.utils;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -21,6 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -44,14 +47,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import actiknow.com.actipatient.R;
 import actiknow.com.actipatient.app.AppController;
 
-import static android.R.attr.key;
-import static android.R.id.input;
 import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
@@ -275,6 +275,20 @@ public class Utils {
 
         */
 
+    public static void showSnackBar (Activity activity, CoordinatorLayout coordinatorLayout, String message, int duration, String button_text, View.OnClickListener onClickListener) {
+        final Snackbar snackbar = Snackbar.make (coordinatorLayout, message, duration);
+        snackbar.setAction (button_text, onClickListener);
+
+        View sbView = snackbar.getView ();
+        sbView.setBackgroundColor (activity.getResources ().getColor (R.color.snackbar_background));
+        TextView textView = (TextView) sbView.findViewById (android.support.design.R.id.snackbar_text);
+        TextView textView2 = (TextView) sbView.findViewById (android.support.design.R.id.snackbar_action);
+        textView.setTextColor (activity.getResources ().getColor (R.color.text_color_white));
+        textView2.setTextColor (activity.getResources ().getColor (R.color.text_color_white));
+        textView.setTypeface (SetTypeFace.getTypeface (activity));
+        textView2.setTypeface (SetTypeFace.getTypeface (activity));
+        snackbar.show ();
+    }
 
     public static void sendRequest(StringRequest strRequest, int timeout_seconds) {
         strRequest.setShouldCache(false);
@@ -321,6 +335,8 @@ public class Utils {
             return false;
         }
     }
+
+
 
     // Get a MemoryInfo object for the device's current memory status.
     private static ActivityManager.MemoryInfo getAvailableMemory(Activity activity) {
@@ -538,5 +554,22 @@ public class Utils {
         }
         return new String(output);
     }
+
+    public static void showProgressDialog (ProgressDialog progressDialog, String message, boolean cancelable) {
+        // Initialize the progressDialog before calling this function
+        CustomFontTextView tvMessage;
+        progressDialog.show ();
+        progressDialog.getWindow ().setBackgroundDrawable (new ColorDrawable (android.graphics.Color.TRANSPARENT));
+        progressDialog.setContentView (R.layout.progress_dialog);
+        tvMessage = (CustomFontTextView) progressDialog.findViewById (R.id.tvProgressDialogMessage);
+        if (message != null) {
+            tvMessage.setText (message);
+            tvMessage.setVisibility (View.VISIBLE);
+        } else
+            tvMessage.setVisibility (View.GONE);
+        progressDialog.setCancelable (cancelable);
     }
+
+}
+
 

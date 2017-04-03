@@ -22,8 +22,9 @@
 
     <string name="no">NO</string>
 
-
-
+<!-- EditText Error Strings -->
+    <string name="please_enter_username">Please enter Username</string>
+    <string name="please_enter_password">Please enter Password</string>
 
 
     <string-array name="category">

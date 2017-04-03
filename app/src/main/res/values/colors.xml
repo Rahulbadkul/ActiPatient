@@ -60,5 +60,6 @@
 
     <color name="purple">#1c2b61</color>
 
+    <color name="snackbar_background">#1c2b61</color>
 
 </resources>
