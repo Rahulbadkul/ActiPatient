@@ -7,12 +7,17 @@ public class Question {
     int question_id;
     String question_text;
     int question_category_id;
-    ArrayList<QuestionOptions> questionOptionList =new ArrayList<>();
+    ArrayList<QuestionOption> questionOptionList = new ArrayList<> ();
 
     public Question(int question_id, String question_text, int question_category_id){
         this.question_id = question_id;
         this.question_text = question_text;
         this.question_category_id = question_category_id;
+    }
+
+    public Question () {
+
+
     }
 
     public int getQuestion_category_id () {
@@ -23,11 +28,6 @@ public class Question {
         this.question_category_id = question_category_id;
     }
 
-    public Question() {
-
-
-    }
-
     public int getQuestion_id () {
         return question_id;
     }
@@ -36,15 +36,15 @@ public class Question {
         this.question_id = question_id;
     }
 
-    public ArrayList<QuestionOptions> getQuestionOptionList () {
+    public ArrayList<QuestionOption> getQuestionOptionList () {
         return questionOptionList;
      }
 
-    public void setQuestionOptionList (ArrayList<QuestionOptions> questionOptionList) {
+    public void setQuestionOptionList (ArrayList<QuestionOption> questionOptionList) {
         this.questionOptionList = questionOptionList;
     }
 
-    public void addQuestionOption (QuestionOptions option) {
+    public void addQuestionOption (QuestionOption option) {
         this.questionOptionList.add(option);
     }
 

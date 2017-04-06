@@ -10,26 +10,30 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/progress_dialog_bg"
-        android:paddingBottom="16dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp">
-<ProgressBar
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-android:id="@+id/progressbar"/>
+        android:paddingBottom="@dimen/activity_margin"
+        android:paddingLeft="@dimen/activity_margin"
+        android:paddingRight="@dimen/activity_margin"
+        android:paddingTop="@dimen/activity_margin">
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/colorPrimary"
+            android:indeterminateTintMode="src_in"/>
         <actiknow.com.actipatient.utils.CustomFontTextView
-            android:layout_toRightOf="@+id/progressbar"
             android:id="@+id/tvProgressDialogMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="@dimen/activity_margin"
+            android:layout_marginStart="@dimen/activity_margin"
+            android:layout_toEndOf="@+id/progressbar"
+            android:layout_toRightOf="@+id/progressbar"
             android:gravity="center"
-            android:text="Loading..."
-            android:textColor="#000000"
-            android:textSize="16sp"
+            android:text="@string/progress_dialog_text_loading"
+            android:textColor="@color/app_text_color"
+            android:textSize="@dimen/text_size_medium"
             android:visibility="visible"/>
     </RelativeLayout>
 </RelativeLayout>

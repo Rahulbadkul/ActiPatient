@@ -1,84 +1,70 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10dp"
-    android:orientation="vertical">
-
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:orientation="horizontal"
-       android:weightSum="2"
-
-       >
-       <TextView
-           android:text="Survey Category"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/tvCategory"
-           android:layout_weight="1"/>
-
-       <fr.ganfra.materialspinner.MaterialSpinner
-           android:id="@+id/spCategory"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           app:ms_multiline="false"
-           app:ms_enableFloatingLabel="false"
-           app:ms_enableErrorLabel="false"
-           app:ms_floatingLabelText="floating label"
-           app:ms_arrowSize="16dp"
-           app:ms_alignLabels="false"
-           app:ms_typeface="CenturyGothic.ttf"
-          />
-
-
-   </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true">
+    <TableLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal">
 
-        >
-        <TextView
-            android:text="Subscription Status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvStatus"
-            android:layout_weight="1"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:id="@+id/tvSubscriptionStatus" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2"
-
-            >
+        <TableRow>
             <TextView
-                android:text="Subscription Expiry"
+                android:id="@+id/tvCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/tvExpiry"/>
-
-            <TextView
+                android:layout_gravity="center_vertical"
+                android:text="@string/dialog_setting_text_survey_type"
+                android:textColor="@color/app_text_color"
+                android:textSize="@dimen/text_size_large"/>
+            <Spinner
+                android:id="@+id/spSurveyType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/activity_margin"
+                android:layout_marginStart="@dimen/activity_margin"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/dialog_setting_text_subscription_status"
+                android:textColor="@color/app_text_color"
+                android:textSize="@dimen/text_size_large"/>
+
+            <TextView
+                android:id="@+id/tvSubscriptionStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/activity_margin"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:textColor="@color/app_text_color"
+                android:textSize="@dimen/text_size_large"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/tvExpiry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/dialog_setting_text_subscription_expiry"
+                android:textColor="@color/app_text_color"
+                android:textSize="@dimen/text_size_large"/>
+
+            <TextView
                 android:id="@+id/tvSubscriptionExpiry"
-                android:text="31-Dec-2017"/>
-
-       </LinearLayout>
-
-
-        </LinearLayout>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_margin"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:text=""
+                android:textColor="@color/app_text_color"
+                android:textSize="@dimen/text_size_large"/>
+        </TableRow>
+    </TableLayout>
+</RelativeLayout>

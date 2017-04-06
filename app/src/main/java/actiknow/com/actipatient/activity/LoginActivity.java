@@ -43,8 +43,6 @@ import actiknow.com.actipatient.utils.TypefaceSpan;
 import actiknow.com.actipatient.utils.UserDetailsPref;
 import actiknow.com.actipatient.utils.Utils;
 
-import static actiknow.com.actipatient.R.id.tvforgetPassword;
-
 public class LoginActivity extends AppCompatActivity {
     EditText etUsername;
     EditText etPassword;
@@ -61,7 +59,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView (R.layout.activity_login);
         initView ();
         initData();
@@ -70,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initData () {
         android_id = Settings.Secure.getString (this.getContentResolver (), Settings.Secure.ANDROID_ID);
-        Utils.showLog (Log.DEBUG, "Android ID", android_id, true);
         progressDialog = new ProgressDialog (LoginActivity.this);
     }
 
@@ -83,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
         tvPleaseLogin = (TextView) findViewById (R.id.tvPleaseLogin);
         tvUsername = (TextView) findViewById (R.id.tvUsername);
         tvPassword = (TextView) findViewById (R.id.tvPassword);
-        tvForgotPassword = (TextView) findViewById (tvforgetPassword);
+        tvForgotPassword = (TextView) findViewById (R.id.tvForgotPassword);
         tvForgotPassword.setPaintFlags (tvForgotPassword.getPaintFlags () | Paint.UNDERLINE_TEXT_FLAG);
 
         Utils.setTypefaceToAllViews (this, tvForgotPassword);
@@ -151,9 +147,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showActiveSessionDialog (final String username, final String password) {
         new MaterialDialog.Builder (this)
-                .content ("Another session with same login already exist. Do you wish to logout from other sessions.")
-                .positiveText ("YES")
-                .negativeText ("NO")
+                .content (getResources ().getString (R.string.dialog_text_another_session))
+                .positiveText (getResources ().getString (R.string.dialog_action_yes))
+                .negativeText (getResources ().getString (R.string.dialog_action_no))
                 .onPositive (new MaterialDialog.SingleButtonCallback () {
                     @Override
                     public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -171,13 +167,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showForgotPasswordDialog () {
         new MaterialDialog.Builder (this)
-                .title ("Please enter your username")
+                .content (getResources ().getString (R.string.dialog_text_enter_username))
+                .positiveColor (getResources ().getColor (R.color.colorPrimary))
+                .contentColor (getResources ().getColor (R.color.colorPrimary))
                 .inputType (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
                 .typeface (SetTypeFace.getTypeface (this), SetTypeFace.getTypeface (this))
                 .input ("", "", new MaterialDialog.InputCallback () {
                     @Override
                     public void onInput (MaterialDialog dialog, CharSequence input) {
-                        // Do something
                         dialog.dismiss ();
                         sendForgotPasswordRequestToServer (input.toString ());
                     }
@@ -186,7 +183,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void sendLoginDetailsToServer (final String username, final String password) {
         if (NetworkConnection.isNetworkAvailable (LoginActivity.this)) {
-            Utils.showProgressDialog (progressDialog, "Logging In..", true);
+            Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_logging_in), true);
             Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_LOGIN, true);
             StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.URL_LOGIN,
                     new com.android.volley.Response.Listener<String> () {
@@ -215,8 +212,13 @@ public class LoginActivity extends AppCompatActivity {
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.SUBSCRIPTION_STATUS, jsonObj.getString (AppConfigTags.SUBSCRIPTION_STATUS));
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.SUBSCRIPTION_STARTS, jsonObj.getString (AppConfigTags.SUBSCRIPTION_STARTS));
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.SUBSCRIPTION_EXPIRES, jsonObj.getString (AppConfigTags.SUBSCRIPTION_EXPIRES));
-                                            userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.LANGUAGE, "en");
-                                            SendToMainActivity ();
+                                            userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.LANGUAGE, AppConfigTags.english_language_code);
+
+                                            Intent intent = new Intent (LoginActivity.this, MainActivity.class);
+                                            intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity (intent);
+                                            overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
+
                                             break;
                                         case 2:
                                             Utils.showSnackBar (LoginActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
@@ -225,7 +227,7 @@ public class LoginActivity extends AppCompatActivity {
                                             showActiveSessionDialog (username, password);
                                             break;
                                         case 4:
-                                            Utils.showSnackBar (LoginActivity.this, clMain, message, Snackbar.LENGTH_LONG, "RETRY", new View.OnClickListener () {
+                                            Utils.showSnackBar (LoginActivity.this, clMain, message, Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_retry), new View.OnClickListener () {
                                                 @Override
                                                 public void onClick (View v) {
                                                     sendLoginDetailsToServer (username, password);
@@ -234,9 +236,12 @@ public class LoginActivity extends AppCompatActivity {
                                             break;
                                     }
                                 } catch (JSONException e) {
+                                    progressDialog.dismiss ();
+                                    Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     e.printStackTrace ();
                                 }
                             } else {
+                                Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                 Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
                             }
                             progressDialog.dismiss ();
@@ -247,7 +252,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onErrorResponse (VolleyError error) {
                             progressDialog.dismiss ();
                             Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
-                            Utils.showSnackBar (LoginActivity.this, clMain, "Error Occurred", Snackbar.LENGTH_LONG, null, null);
+                            Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                         }
                     }) {
                 @Override
@@ -270,7 +275,7 @@ public class LoginActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest1, 60);
         } else {
-            Utils.showSnackBar (LoginActivity.this, clMain, "No Internet Connection available", Snackbar.LENGTH_LONG, "GO TO SETTINGS", new View.OnClickListener () {
+            Utils.showSnackBar (this, clMain, getResources ().getString (R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_go_to_settings), new View.OnClickListener () {
                 @Override
                 public void onClick (View v) {
                     Intent dialogIntent = new Intent (android.provider.Settings.ACTION_SETTINGS);
@@ -283,7 +288,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void sendForgotPasswordRequestToServer (final String username) {
         if (NetworkConnection.isNetworkAvailable (LoginActivity.this)) {
-            Utils.showProgressDialog (progressDialog, "Sending Request...", true);
+            Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_sending_request), true);
             Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_FORGET_PASSWORD, true);
             StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.URL_FORGET_PASSWORD,
                     new com.android.volley.Response.Listener<String> () {
@@ -296,9 +301,9 @@ public class LoginActivity extends AppCompatActivity {
                                     boolean error = jsonObj.getBoolean (AppConfigTags.ERROR);
                                     String message = jsonObj.getString (AppConfigTags.MESSAGE);
                                     if (! error) {
-                                        Utils.showSnackBar (LoginActivity.this, clMain, message, Snackbar.LENGTH_LONG, "DISMISS", null);
+                                        Utils.showSnackBar (LoginActivity.this, clMain, message, Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     } else {
-                                        Utils.showSnackBar (LoginActivity.this, clMain, message, Snackbar.LENGTH_LONG, "RETRY", new View.OnClickListener () {
+                                        Utils.showSnackBar (LoginActivity.this, clMain, message, Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_retry), new View.OnClickListener () {
                                             @Override
                                             public void onClick (View v) {
                                                 showForgotPasswordDialog ();
@@ -306,10 +311,13 @@ public class LoginActivity extends AppCompatActivity {
                                         });
                                     }
                                 } catch (JSONException e) {
+                                    progressDialog.dismiss ();
+                                    Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     e.printStackTrace ();
                                 }
                             } else {
                                 Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                                Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                             }
                             progressDialog.dismiss ();
                         }
@@ -317,7 +325,9 @@ public class LoginActivity extends AppCompatActivity {
                     new com.android.volley.Response.ErrorListener () {
                         @Override
                         public void onErrorResponse (VolleyError error) {
+                            progressDialog.dismiss ();
                             Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                            Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                         }
                     }) {
                 @Override
@@ -338,7 +348,7 @@ public class LoginActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest1, 60);
         } else {
-            Utils.showSnackBar (LoginActivity.this, clMain, "No Internet Connection available", Snackbar.LENGTH_LONG, "GO TO SETTINGS", new View.OnClickListener () {
+            Utils.showSnackBar (this, clMain, getResources ().getString (R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_go_to_settings), new View.OnClickListener () {
                 @Override
                 public void onClick (View v) {
                     Intent dialogIntent = new Intent (android.provider.Settings.ACTION_SETTINGS);
@@ -351,7 +361,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void logoutActiveSessions (final String username, final String password) {
         if (NetworkConnection.isNetworkAvailable (LoginActivity.this)) {
-            Utils.showProgressDialog (progressDialog, "Please wait..", true);
+            Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_please_wait), true);
             Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_LOGOUT_ACTIVESESSION, true);
             StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.URL_LOGOUT_ACTIVESESSION,
                     new com.android.volley.Response.Listener<String> () {
@@ -365,10 +375,13 @@ public class LoginActivity extends AppCompatActivity {
                                     String message = jsonObj.getString (AppConfigTags.MESSAGE);
                                     Utils.showSnackBar (LoginActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
                                 } catch (JSONException e) {
+                                    progressDialog.dismiss ();
+                                    Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     e.printStackTrace ();
                                 }
                             } else {
                                 Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                                Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                             }
                             progressDialog.dismiss ();
                         }
@@ -376,7 +389,9 @@ public class LoginActivity extends AppCompatActivity {
                     new com.android.volley.Response.ErrorListener () {
                         @Override
                         public void onErrorResponse (VolleyError error) {
+                            progressDialog.dismiss ();
                             Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                            Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                         }
                     }) {
                 @Override
@@ -398,7 +413,7 @@ public class LoginActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest1, 60);
         } else {
-            Utils.showSnackBar (LoginActivity.this, clMain, "No Internet Connection available", Snackbar.LENGTH_LONG, "GO TO SETTINGS", new View.OnClickListener () {
+            Utils.showSnackBar (this, clMain, getResources ().getString (R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_go_to_settings), new View.OnClickListener () {
                 @Override
                 public void onClick (View v) {
                     Intent dialogIntent = new Intent (android.provider.Settings.ACTION_SETTINGS);
@@ -407,11 +422,5 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }
-    }
-
-    private void SendToMainActivity () {
-        Intent sendToMainActivity = new Intent (LoginActivity.this, MainActivity.class);
-        startActivity (sendToMainActivity);
-        overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }

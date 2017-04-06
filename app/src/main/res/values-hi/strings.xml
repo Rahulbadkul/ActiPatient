@@ -1,18 +1,86 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="thanku">धन्यवाद! आपका फीडबैक हमारे लिए मूल्यवान है!</string>
-    <string name="welcome"> में आपका स्वागत है</string>
-    <string name="start">शुरू करें</string>
-    <string name="comment">क्या आप टिप्पणी देना चाहेगें?</string>
-    <string name="submit">सबमिट करें</string>
+    <string name="app_name">ActiPatient</string>
+
+    <!--
+    <string name="comment"></string>
+    <string name="submit"></string>
     <string name="skip">छोड़ें</string>
-    <string name="logout">लोग आउट</string>
-    <string name="optional">वैकल्पिक</string>
+    <string name="logout"></string>
     <string name="cancel">रद्द करें</string>
-    <string name="quit">क्या आप सर्वेक्षण छोड़ना चाहते हैं?</string>
-    <string name="yes">हाँ</string>
-    <string name="no">नहीं</string>
+    <string name="quit"></string>
+    <string name="yes"></string>
+    <string name="no"></string>
+-->
 
 
+    <!-- EditText Error Strings -->
+    <string name="please_enter_username">यूजरनेम दर्ज करें</string>
+    <string name="please_enter_password">दपासवर्ड र्ज करें</string>
+
+    <string name="activity_main_text_language_english">English</string>
+    <string name="activity_main_text_language_hindi">हिंदी</string>
+    <string name="activity_main_text_heading">में आपका स्वागत है</string>
+    <string name="activity_main_text_powered_by">powered by</string>
+    <string name="activity_main_button_start_survey">शुरू करें</string>
+
+    <string name="activity_login_text_welcome_to_actipatient">एक्टिपेशेंट\nमैं\nआपका स्वागत है
+    </string>
+    <string name="activity_login_text_please_login">कृपया लॉगिन करें</string>
+    <string name="activity_login_text_username">यूजरनेम</string>
+    <string name="activity_login_text_password">पासवर्ड</string>
+    <string name="activity_login_button_login">लॉग इन करें</string>
+    <string name="activity_login_button_forgot_password">पासवर्ड भूल गए?</string>
+
+    <string name="activity_survey_text_thank_you">धन्यवाद! आपका फीडबैक हमारे लिए मूल्यवान है!
+    </string>
+
+
+    <string name="dialog_setting_text_survey_type">सर्वेक्षण प्रकार</string>
+    <string name="dialog_setting_text_subscription_status">सब्सक्रिप्शन की स्थिति</string>
+    <string name="dialog_setting_text_subscription_expiry">सब्सक्रिप्शन की समाप्ति</string>
+
+    <string name="dialog_password_text_enter_access_pin">एक्सेस पिन दर्ज करें</string>
+    <string name="dialog_password_text_forgot_pin">पिन भूल गया?</string>
+    <string name="dialog_password_hint_pin">\u2015 \u2015 \u2015 \u2015</string>
+
+    <string name="dialog_text_quit_survey">क्या आप सर्वेक्षण छोड़ना चाहते हैं?</string>
+    <string name="dialog_text_quit_application">क्या आप एप्लीकेशन छोड़ना चाहते हैं?</string>
+
+
+    <string name="progress_dialog_text_loading">लोड हो रहा है...</string>
+    <string name="progress_dialog_text_generating_survey">कृपया प्रतीक्षा करें...</string>
+    <string name="progress_dialog_text_logging_out">लॉगआउट हो रहा है...</string>
+    <string name="progress_dialog_text_logging_in">लोगिन हो रहा है...</string>
+    <string name="progress_dialog_text_please_wait">कृपया प्रतीक्षा करें...</string>
+    <string name="progress_dialog_text_sending_request">अनुरोध भेजा जा रहा है...</string>
+    <string name="progress_dialog_text_submitting_responses">प्रतिक्रियाएं सबमिट हो रही है...
+    </string>
+
+    <string name="snackbar_text_no_internet_connection_available">इंटरनेट कनेक्शन उपलब्ध नहीं है
+    </string>
+    <string name="snackbar_text_error_occurred">एरर हुआ</string>
+    <string name="snackbar_text_exception_occurred">एक्सेप्शन हुआ</string>
+    <string name="snackbar_text_invalid_access_pin">अमान्य एक्सेस पिन</string>
+
+    <string name="snackbar_action_go_to_settings">सेटिंग्स में जाएं</string>
+    <string name="snackbar_action_dismiss">खारिज करें</string>
+    <string name="snackbar_action_retry">पुन: प्रयास करें</string>
+
+
+    <string name="dialog_text_another_session">Another session with same login already exist. Do you
+        wish to logout from other sessions.
+    </string>
+    <string name="dialog_text_enter_username">अपना यूजरनाम दर्ज करे</string>
+    <string name="dialog_text_would_you_like_to_comment">क्या आप टिप्पणी देना चाहेगें?</string>
+    <string name="dialog_hint_optional">वैकल्पिक</string>
+
+    <string name="dialog_action_yes">हाँ</string>
+    <string name="dialog_action_no">नहीं</string>
+    <string name="dialog_action_ok">ठीक</string>
+    <string name="dialog_action_cancel">रद्द करें</string>
+    <string name="dialog_action_logout">लोग आउट</string>
+    <string name="dialog_action_submit">सबमिट करें</string>
 
 </resources>
+
+

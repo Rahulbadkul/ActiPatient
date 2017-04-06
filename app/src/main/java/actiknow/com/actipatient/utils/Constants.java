@@ -4,8 +4,8 @@ package actiknow.com.actipatient.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import actiknow.com.actipatient.model.SurveyResponse;
 import actiknow.com.actipatient.model.Question;
+import actiknow.com.actipatient.model.SurveyResponse;
 import actiknow.com.actipatient.model.SurveyType;
 
 public class Constants {
@@ -20,8 +20,10 @@ public class Constants {
     public static String status = "";
     public static String survey_id;
 
+
     public static String api_key = "9e3d710529e11ab2be4e39402ae544ce";
 //    public static String hospital_login_key = "9e3d710529e11ab2be4e39402ae544ce";
     public static String patient_id = "MH123456";
+
 
 }

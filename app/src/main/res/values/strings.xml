@@ -1,34 +1,78 @@
 <resources>
     <string name="app_name">ActiPatient</string>
-    <string name="thanku">Thank you! Your Feedback is valuable for us.</string>
-    <string name="welcome">Welcome To </string>
-    
-    <string name="start">START SURVEY</string>
-    <string name="skip">Skip</string>
 
-    <string name="comment">Would you like to Comment</string>
 
-    <string name="quit">Do you want to quit the survey?</string>
 
-    <string name="optional">Optional</string>
-    
-    <string name="submit">OK</string>
-        
-    <string name="cancel">CANCEL</string>
-    
-    <string name="logout">LOGOUT</string>
-
-    <string name="yes">YES</string>
-
-    <string name="no">NO</string>
 
 <!-- EditText Error Strings -->
     <string name="please_enter_username">Please enter Username</string>
     <string name="please_enter_password">Please enter Password</string>
 
+    <string name="activity_main_text_language_english">English</string>
+    <string name="activity_main_text_language_hindi">हिंदी</string>
+    <string name="activity_main_text_heading">Welcome To</string>
+    <string name="activity_main_text_powered_by">powered by</string>
+    <string name="activity_main_button_start_survey">START SURVEY</string>
 
-    <string-array name="category">
-        <item>In Patient</item>
-        <item>Out Patient</item>
-    </string-array>
+    <string name="activity_login_text_welcome_to_actipatient">WELCOME \nTO \nACTIPATIENT</string>
+    <string name="activity_login_text_please_login">PLEASE LOGIN</string>
+    <string name="activity_login_text_username">Username</string>
+    <string name="activity_login_text_password">Password</string>
+    <string name="activity_login_button_login">LOGIN</string>
+    <string name="activity_login_button_forgot_password">forgot password?</string>
+
+    <string name="activity_survey_text_thank_you">Thank you! Your Feedback is valuable for us.
+    </string>
+
+
+    <string name="dialog_setting_text_survey_type">Survey Type</string>
+    <string name="dialog_setting_text_subscription_status">Subscription Status</string>
+    <string name="dialog_setting_text_subscription_expiry">Subscription Expiry</string>
+
+    <string name="dialog_password_text_enter_access_pin">Enter Access PIN</string>
+    <string name="dialog_password_text_forgot_pin">forgot PIN?</string>
+    <string name="dialog_password_hint_pin">\u2015 \u2015 \u2015 \u2015</string>
+
+    <string name="dialog_text_quit_survey">Do you want to quit the survey?</string>
+    <string name="dialog_text_quit_application">Do you want to quit the application?</string>
+
+
+    <string name="progress_dialog_text_loading">Loading...</string>
+    <string name="progress_dialog_text_generating_survey">Generating Survey...</string>
+    <string name="progress_dialog_text_logging_out">Logging Out...</string>
+    <string name="progress_dialog_text_logging_in">Logging In...</string>
+    <string name="progress_dialog_text_please_wait">Please wait...</string>
+    <string name="progress_dialog_text_sending_request">Sending Request...</string>
+    <string name="progress_dialog_text_submitting_responses">Submitting Responses...</string>
+
+    <string name="snackbar_text_no_internet_connection_available">No Internet Connection available
+    </string>
+    <string name="snackbar_text_error_occurred">Error Occurred</string>
+    <string name="snackbar_text_exception_occurred">Exception Occurred</string>
+    <string name="snackbar_text_invalid_access_pin">Invalid Access PIN</string>
+
+    <string name="snackbar_action_go_to_settings">GO TO SETTINGS</string>
+    <string name="snackbar_action_dismiss">DISMISS</string>
+    <string name="snackbar_action_retry">RETRY</string>
+
+
+    <string name="dialog_text_another_session">Another session with same login already exist. Do you
+        wish to logout from other sessions.
+    </string>
+    <string name="dialog_text_update_avaialble">Another session with same login already exist. Do
+        you
+        wish to logout from other sessions.
+    </string>
+    <string name="dialog_text_enter_username">Please enter your username</string>
+    <string name="dialog_text_would_you_like_to_comment">Would you like to comment?</string>
+    <string name="dialog_hint_optional">optional</string>
+
+    <string name="dialog_action_yes">YES</string>
+    <string name="dialog_action_no">NO</string>
+    <string name="dialog_action_ok">OK</string>
+    <string name="dialog_action_cancel">CANCEL</string>
+    <string name="dialog_action_logout">LOGOUT</string>
+    <string name="dialog_action_submit">SUBMIT</string>
+
+
 </resources>

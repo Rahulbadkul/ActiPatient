@@ -1,15 +1,15 @@
 package actiknow.com.actipatient.model;
 
-public class QuestionOptions {
+public class QuestionOption {
     int option_id;
     String option_text;
 
-    public QuestionOptions (int option_id, String option_text){
+    public QuestionOption (int option_id, String option_text) {
         this.option_id = option_id;
         this.option_text = option_text;
     }
 
-    public QuestionOptions () {
+    public QuestionOption () {
     }
 
     public int getOption_id () {

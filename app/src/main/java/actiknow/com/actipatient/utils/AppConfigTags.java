@@ -4,10 +4,14 @@ package actiknow.com.actipatient.utils;
  * Created by actiknow on 10/23/15.
  */
 public class AppConfigTags {
+
+    public static final String english_language_code = "en";
+    public static final String hindi_language_code = "hi";
+
+
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     public static final String DEVICE_IDENTIICATION= "device_identification";
-
 
 
     public static final String SURVEY_TYPE_ID = "survey_type_id";
@@ -38,12 +42,21 @@ public class AppConfigTags {
     public static final String STATUS = "status";
 
     public static final String QUESTION = "question";
+    public static final String QUESTION_CATEGORY_ID = "question_category_id";
     public static final String QUESTION_ID = "question_id";
+    public static final String QUESTION_TEXT = "question_text";
     public static final String OPTIONS = "options";
     public static final String OPTION_ID = "option_id";
-    public static final String QUESTION_TEXT = "question_text";
-    public static final String QUESTION_CATEGORY_ID = "question_category_id";
+    public static final String OPTION_TEXT = "option_text";
 
+    public static final String RESPONSES = "responses";
+
+    public static final String PATIENT_ID = "patient_id";
+    public static final String RESPONSES_JSON = "responses_json";
+    public static final String COMMENTS = "comments";
+
+
+    public static final String SURVEY_ID = "survey_id";
     public static final String SURVEY_DETAILS = "survey_details";
     public static final String SURVEY_TYPE = "survey_types";
 
@@ -54,5 +67,6 @@ public class AppConfigTags {
 
     public static final String ERROR = "error";
     public static final String MESSAGE = "message";
+
 
 }

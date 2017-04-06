@@ -24,6 +24,10 @@
             android:name=".activity.LoginActivity"
             android:imeOptions="flagNoExtractUi"
             android:screenOrientation="landscape"/>
+        <activity
+            android:name=".activity.SurveyActivity"
+            android:imeOptions="flagNoExtractUi"
+            android:screenOrientation="landscape"/>
         <meta-data
             android:name="com.bugsnag.android.API_KEY"
             android:value="b2b4c756b3b88a72891033fa275309db"/>

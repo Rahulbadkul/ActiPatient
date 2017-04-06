@@ -21,6 +21,8 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -45,6 +47,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -116,15 +119,16 @@ public class Utils {
     }
 
     public static String convertTimeFormat(String dateInOriginalFormat, String originalFormat, String requiredFormat) {
+        Locale locale = new Locale ("en");
         if (dateInOriginalFormat != "null") {
-            SimpleDateFormat sdf = new SimpleDateFormat(originalFormat);//yyyy-MM-dd");
+            SimpleDateFormat sdf = new SimpleDateFormat (originalFormat, locale);//yyyy-MM-dd");
             Date testDate = null;
             try {
                 testDate = sdf.parse(dateInOriginalFormat);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            SimpleDateFormat formatter = new SimpleDateFormat(requiredFormat);
+            SimpleDateFormat formatter = new SimpleDateFormat (requiredFormat, locale);
             String newFormat = formatter.format(testDate);
             return newFormat;
         } else {
@@ -133,6 +137,10 @@ public class Utils {
     }
 
 
+    public static void shakeEditText (Activity activity, EditText editText) {
+        Animation shake = AnimationUtils.loadAnimation (activity, R.anim.shake);
+        editText.startAnimation (shake);
+    }
 
     /*public static void showSnackBar (CoordinatorLayout coordinatorLayout, String message) {
         final Snackbar snackbar = Snackbar
