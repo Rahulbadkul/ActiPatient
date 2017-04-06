@@ -59,10 +59,11 @@
     <string name="dialog_text_another_session">Another session with same login already exist. Do you
         wish to logout from other sessions.
     </string>
-    <string name="dialog_text_update_avaialble">Another session with same login already exist. Do
-        you
-        wish to logout from other sessions.
+
+    <string name="dialog_text_update_available">New version of the application is available. Please
+        update
     </string>
+
     <string name="dialog_text_enter_username">Please enter your username</string>
     <string name="dialog_text_would_you_like_to_comment">Would you like to comment?</string>
     <string name="dialog_hint_optional">optional</string>
@@ -73,6 +74,8 @@
     <string name="dialog_action_cancel">CANCEL</string>
     <string name="dialog_action_logout">LOGOUT</string>
     <string name="dialog_action_submit">SUBMIT</string>
+    <string name="dialog_action_ignore">IGNORE</string>
+    <string name="dialog_action_update">UPDATE</string>
 
 
 </resources>

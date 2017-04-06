@@ -981,11 +981,11 @@ public class MainActivity extends AppCompatActivity {
                 }).show ();
     }
 
-    private void showApplicationUpdateDialog () {
+    private void showApplicationUpdateDialog (boolean is_critical) {
         new MaterialDialog.Builder (this)
-                .content (getResources ().getString (R.string.dialog_text_another_session))
-                .positiveText (getResources ().getString (R.string.dialog_action_yes))
-                .negativeText (getResources ().getString (R.string.dialog_action_no))
+                .content (getResources ().getString (R.string.dialog_text_update_available))
+                .positiveText (getResources ().getString (R.string.dialog_action_update))
+                .negativeText (getResources ().getString (R.string.dialog_action_ignore))
                 .onPositive (new MaterialDialog.SingleButtonCallback () {
                     @Override
                     public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
