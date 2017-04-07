@@ -576,8 +576,8 @@ public class Utils {
         } else
             tvMessage.setVisibility (View.GONE);
         progressDialog.setCancelable (cancelable);
+        progressDialog.setCanceledOnTouchOutside (cancelable);
     }
-
 }
 
 

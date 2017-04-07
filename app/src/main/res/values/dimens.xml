@@ -47,7 +47,7 @@
     <dimen name="question_padding_left_right">70dp</dimen>
 
     <dimen name="option_button_padding_top_bottom">10dp</dimen>
-    <dimen name="option_button_padding_left_right">40dp</dimen>
+    <dimen name="option_button_padding_left_right">5dp</dimen>
 
     <dimen name="smiley_button_height">80dp</dimen>
 

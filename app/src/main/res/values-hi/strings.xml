@@ -55,6 +55,7 @@
     <string name="progress_dialog_text_sending_request">अनुरोध भेजा जा रहा है...</string>
     <string name="progress_dialog_text_submitting_responses">प्रतिक्रियाएं सबमिट हो रही है...
     </string>
+    <string name="progress_dialog_text_initializing">एप्लीकेशन लोड हो रही है...</string>
 
     <string name="snackbar_text_no_internet_connection_available">इंटरनेट कनेक्शन उपलब्ध नहीं है
     </string>
@@ -72,14 +73,20 @@
     </string>
     <string name="dialog_text_enter_username">अपना यूजरनाम दर्ज करे</string>
     <string name="dialog_text_would_you_like_to_comment">क्या आप टिप्पणी देना चाहेगें?</string>
+    <string name="dialog_text_new_version_available">एप्लीकेशन का नया वर्शन उपलब्ध है। कृपया अपडेट
+        करें
+    </string>
     <string name="dialog_hint_optional">वैकल्पिक</string>
 
     <string name="dialog_action_yes">हाँ</string>
     <string name="dialog_action_no">नहीं</string>
     <string name="dialog_action_ok">ठीक</string>
     <string name="dialog_action_cancel">रद्द करें</string>
-    <string name="dialog_action_logout">लोग आउट</string>
+    <string name="dialog_action_logout">लोग आउट करें</string>
     <string name="dialog_action_submit">सबमिट करें</string>
+    <string name="dialog_action_ignore">इग्नोर करें</string>
+    <string name="dialog_action_update">अपडेट करें</string>
+    <string name="dialog_action_close">क्लोज करें</string>
 
 </resources>
 

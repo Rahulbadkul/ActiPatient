@@ -1,9 +1,12 @@
 package actiknow.com.actipatient.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -15,6 +18,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,7 +30,6 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -44,6 +47,7 @@ import actiknow.com.actipatient.utils.UserDetailsPref;
 import actiknow.com.actipatient.utils.Utils;
 
 public class LoginActivity extends AppCompatActivity {
+    protected PowerManager.WakeLock mWakeLock;
     EditText etUsername;
     EditText etPassword;
     TextView tvWelcome;
@@ -55,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     String android_id;
     CoordinatorLayout clMain;
     ProgressDialog progressDialog;
+    Configuration config;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -68,6 +73,13 @@ public class LoginActivity extends AppCompatActivity {
     private void initData () {
         android_id = Settings.Secure.getString (this.getContentResolver (), Settings.Secure.ANDROID_ID);
         progressDialog = new ProgressDialog (LoginActivity.this);
+        config = getResources ().getConfiguration ();
+
+           /* This code together with the one in onDestroy()
+         * will make the screen be always on until this Activity gets destroyed. */
+        final PowerManager pm = (PowerManager) getSystemService (Context.POWER_SERVICE);
+        this.mWakeLock = pm.newWakeLock (PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        this.mWakeLock.acquire ();
     }
 
     private void initView () {
@@ -146,8 +158,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showActiveSessionDialog (final String username, final String password) {
-        new MaterialDialog.Builder (this)
+        MaterialDialog dialog = new MaterialDialog.Builder (this)
                 .content (getResources ().getString (R.string.dialog_text_another_session))
+                .positiveColor (getResources ().getColor (R.color.app_text_color))
+                .contentColor (getResources ().getColor (R.color.app_text_color))
+                .negativeColor (getResources ().getColor (R.color.app_text_color))
                 .positiveText (getResources ().getString (R.string.dialog_action_yes))
                 .negativeText (getResources ().getString (R.string.dialog_action_no))
                 .onPositive (new MaterialDialog.SingleButtonCallback () {
@@ -162,13 +177,24 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 })
                 .typeface (SetTypeFace.getTypeface (this), SetTypeFace.getTypeface (this))
-                .show ();
+                .build ();
+
+        if (config.smallestScreenWidthDp >= 600) {
+            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+        } else {
+            // fall-back code goes here
+        }
+
+
+        dialog.show ();
+
     }
 
     private void showForgotPasswordDialog () {
-        new MaterialDialog.Builder (this)
+        MaterialDialog dialog = new MaterialDialog.Builder (this)
                 .content (getResources ().getString (R.string.dialog_text_enter_username))
-                .positiveColor (getResources ().getColor (R.color.colorPrimary))
                 .contentColor (getResources ().getColor (R.color.colorPrimary))
                 .inputType (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
                 .typeface (SetTypeFace.getTypeface (this), SetTypeFace.getTypeface (this))
@@ -178,7 +204,18 @@ public class LoginActivity extends AppCompatActivity {
                         dialog.dismiss ();
                         sendForgotPasswordRequestToServer (input.toString ());
                     }
-                }).show ();
+                }).build ();
+
+        if (config.smallestScreenWidthDp >= 600) {
+            dialog.getInputEditText ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+        } else {
+            // fall-back code goes here
+        }
+
+
+        dialog.show ();
     }
 
     private void sendLoginDetailsToServer (final String username, final String password) {
@@ -235,7 +272,7 @@ public class LoginActivity extends AppCompatActivity {
                                             });
                                             break;
                                     }
-                                } catch (JSONException e) {
+                                } catch (Exception e) {
                                     progressDialog.dismiss ();
                                     Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     e.printStackTrace ();
@@ -310,7 +347,7 @@ public class LoginActivity extends AppCompatActivity {
                                             }
                                         });
                                     }
-                                } catch (JSONException e) {
+                                } catch (Exception e) {
                                     progressDialog.dismiss ();
                                     Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     e.printStackTrace ();
@@ -374,7 +411,7 @@ public class LoginActivity extends AppCompatActivity {
                                     boolean error = jsonObj.getBoolean (AppConfigTags.ERROR);
                                     String message = jsonObj.getString (AppConfigTags.MESSAGE);
                                     Utils.showSnackBar (LoginActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
-                                } catch (JSONException e) {
+                                } catch (Exception e) {
                                     progressDialog.dismiss ();
                                     Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     e.printStackTrace ();
@@ -422,5 +459,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onDestroy () {
+        this.mWakeLock.release ();
+        super.onDestroy ();
     }
 }

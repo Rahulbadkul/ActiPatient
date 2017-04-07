@@ -1,17 +1,22 @@
 package actiknow.com.actipatient.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -20,10 +25,12 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -45,6 +52,7 @@ import actiknow.com.actipatient.utils.Utils;
 import static actiknow.com.actipatient.utils.Constants.patient_id;
 
 public class SurveyActivity extends AppCompatActivity {
+    protected PowerManager.WakeLock mWakeLock;
     LinearLayout llButtons;
     LinearLayout llSmiley;
     TextView tvQues;
@@ -69,6 +77,9 @@ public class SurveyActivity extends AppCompatActivity {
     CoordinatorLayout clMain;
 
     ProgressDialog progressDialog;
+    ProgressBar progressBar;
+    Configuration config;
+
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -97,13 +108,39 @@ public class SurveyActivity extends AppCompatActivity {
         ivNeutral = (ImageView) findViewById (R.id.imOk);
         ivSad = (ImageView) findViewById (R.id.imSad);
         ivVerySad = (ImageView) findViewById (R.id.imExtremelySad);
+        progressBar = (ProgressBar) findViewById (R.id.progressBar);
     }
 
     private void initData () {
         progressDialog = new ProgressDialog (this);
         userDetailsPref = UserDetailsPref.getInstance ();
         Utils.setTypefaceToAllViews (this, tv1);
-        Picasso.with (this).load (userDetailsPref.getStringPref (this, UserDetailsPref.HOSPITAL_LOGO)).into (imLogo);
+
+        config = getResources ().getConfiguration ();
+
+             /* This code together with the one in onDestroy()
+         * will make the screen be always on until this Activity gets destroyed. */
+        final PowerManager pm = (PowerManager) getSystemService (Context.POWER_SERVICE);
+        this.mWakeLock = pm.newWakeLock (PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        this.mWakeLock.acquire ();
+
+        Glide.with (this)
+                .load (userDetailsPref.getStringPref (this, UserDetailsPref.HOSPITAL_LOGO))
+                .listener (new RequestListener<String, GlideDrawable> () {
+                    @Override
+                    public boolean onException (Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        progressBar.setVisibility (View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady (GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        progressBar.setVisibility (View.GONE);
+                        return false;
+                    }
+                })
+                .into (imLogo);
+
 
         Constants.surveyResponseList.clear ();
 
@@ -364,12 +401,14 @@ public class SurveyActivity extends AppCompatActivity {
 
     public void showInputDialog () {
         final MaterialDialog.Builder mBuilder = new MaterialDialog.Builder (this)
-                .title (R.string.dialog_text_would_you_like_to_comment)
+                .content (R.string.dialog_text_would_you_like_to_comment)
+                .contentColor (getResources ().getColor (R.color.app_text_color))
+                .positiveColor (getResources ().getColor (R.color.app_text_color))
                 .typeface (SetTypeFace.getTypeface (this), SetTypeFace.getTypeface (this))
                 .inputRangeRes (0, 140, R.color.input_error_colour)
                 .alwaysCallInputCallback ()
-                .canceledOnTouchOutside (false)
-                .cancelable (false)
+                .canceledOnTouchOutside (true)
+                .cancelable (true)
                 .positiveText (R.string.dialog_action_submit);
 
         mBuilder.input (getResources ().getString (R.string.dialog_hint_optional), null, new MaterialDialog.InputCallback () {
@@ -390,7 +429,18 @@ public class SurveyActivity extends AppCompatActivity {
                 UploadResponseToServer (dialog.getInputEditText ().getText ().toString (), getResponsesJSON (), String.valueOf (patient_id));
             }
         });
-        mBuilder.show ();
+
+        MaterialDialog dialog = mBuilder.build ();
+
+        if (config.smallestScreenWidthDp >= 600) {
+            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getInputEditText ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+        } else {
+            // fall-back code goes here
+        }
+
+        dialog.show ();
     }
 
     private String getResponsesJSON () {
@@ -410,7 +460,7 @@ public class SurveyActivity extends AppCompatActivity {
         }
         try {
             jsonObject.put (AppConfigTags.RESPONSES, jsonArray);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace ();
         }
         return jsonObject.toString ();
@@ -450,7 +500,7 @@ public class SurveyActivity extends AppCompatActivity {
                                             }
                                         });
                                     }
-                                } catch (JSONException e) {
+                                } catch (Exception e) {
                                     e.printStackTrace ();
                                     Utils.showSnackBar (SurveyActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     progressDialog.dismiss ();
@@ -505,11 +555,11 @@ public class SurveyActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed () {
-        new MaterialDialog.Builder (this)
+        MaterialDialog dialog = new MaterialDialog.Builder (this)
                 .content (R.string.dialog_text_quit_survey)
-                .positiveColor (getResources ().getColor (R.color.colorPrimary))
-                .contentColor (getResources ().getColor (R.color.colorPrimary))
-                .negativeColor (getResources ().getColor (R.color.colorPrimary))
+                .positiveColor (getResources ().getColor (R.color.app_text_color))
+                .contentColor (getResources ().getColor (R.color.app_text_color))
+                .negativeColor (getResources ().getColor (R.color.app_text_color))
                 .typeface (SetTypeFace.getTypeface (this), SetTypeFace.getTypeface (this))
                 .canceledOnTouchOutside (false)
                 .cancelable (false)
@@ -521,6 +571,21 @@ public class SurveyActivity extends AppCompatActivity {
                         finish ();
                         overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
                     }
-                }).show ();
+                }).build ();
+
+        if (config.smallestScreenWidthDp >= 600) {
+            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+        } else {
+            // fall-back code goes here
+        }
+        dialog.show ();
+    }
+
+    @Override
+    public void onDestroy () {
+        this.mWakeLock.release ();
+        super.onDestroy ();
     }
 }

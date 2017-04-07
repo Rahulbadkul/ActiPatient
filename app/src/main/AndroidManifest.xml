@@ -4,6 +4,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
     <application
         android:name=".app.AppController"
         android:allowBackup="true"
@@ -14,7 +16,8 @@
         <activity
             android:name=".activity.MainActivity"
             android:imeOptions="flagNoExtractUi"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -23,11 +26,13 @@
         <activity
             android:name=".activity.LoginActivity"
             android:imeOptions="flagNoExtractUi"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".activity.SurveyActivity"
             android:imeOptions="flagNoExtractUi"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden"/>
         <meta-data
             android:name="com.bugsnag.android.API_KEY"
             android:value="b2b4c756b3b88a72891033fa275309db"/>

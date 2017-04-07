@@ -14,7 +14,7 @@
     <string name="activity_main_text_powered_by">powered by</string>
     <string name="activity_main_button_start_survey">START SURVEY</string>
 
-    <string name="activity_login_text_welcome_to_actipatient">WELCOME \nTO \nACTIPATIENT</string>
+    <string name="activity_login_text_welcome_to_actipatient">WELCOME\nTO\nACTIPATIENT</string>
     <string name="activity_login_text_please_login">PLEASE LOGIN</string>
     <string name="activity_login_text_username">Username</string>
     <string name="activity_login_text_password">Password</string>
@@ -44,6 +44,7 @@
     <string name="progress_dialog_text_please_wait">Please wait...</string>
     <string name="progress_dialog_text_sending_request">Sending Request...</string>
     <string name="progress_dialog_text_submitting_responses">Submitting Responses...</string>
+    <string name="progress_dialog_text_initializing">Initializing Application...</string>
 
     <string name="snackbar_text_no_internet_connection_available">No Internet Connection available
     </string>
@@ -66,6 +67,11 @@
 
     <string name="dialog_text_enter_username">Please enter your username</string>
     <string name="dialog_text_would_you_like_to_comment">Would you like to comment?</string>
+    <string name="dialog_text_new_version_available">New version of the application is available.
+        Please update
+    </string>
+
+
     <string name="dialog_hint_optional">optional</string>
 
     <string name="dialog_action_yes">YES</string>
@@ -76,6 +82,7 @@
     <string name="dialog_action_submit">SUBMIT</string>
     <string name="dialog_action_ignore">IGNORE</string>
     <string name="dialog_action_update">UPDATE</string>
+    <string name="dialog_action_close">CLOSE</string>
 
 
 </resources>

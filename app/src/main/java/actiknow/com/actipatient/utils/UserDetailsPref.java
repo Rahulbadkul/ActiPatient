@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class UserDetailsPref {
+    public static String LOGGED_IN_SESSION = "logged_in_session";
     public static String LANGUAGE = "language";
     public static String SURVEY_TYPE_ID = "survey_type_id";
     public static String DEVICE_ID = "device_id";
@@ -31,23 +32,34 @@ public class UserDetailsPref {
         return context.getSharedPreferences (USER_DETAILS, Context.MODE_PRIVATE);
     }
 
-    public String getStringPref (Context context, String key) {
-        return getPref (context).getString (key, "");
+    public boolean getBooleanPref (Context context, String key) {
+        return getPref (context).getBoolean (key, false);
     }
 
     public int getIntPref (Context context, String key) {
         return getPref (context).getInt (key, 0);
     }
 
-    public void putStringPref (Context context, String key, String value) {
+    public String getStringPref (Context context, String key) {
+        return getPref (context).getString (key, "");
+    }
+
+
+    public void putBooleanPref (Context context, String key, boolean value) {
         SharedPreferences.Editor editor = getPref (context).edit ();
-        editor.putString (key, value);
+        editor.putBoolean (key, value);
         editor.apply ();
     }
 
     public void putIntPref (Context context, String key, int value) {
         SharedPreferences.Editor editor = getPref (context).edit ();
         editor.putInt (key, value);
+        editor.apply ();
+    }
+
+    public void putStringPref (Context context, String key, String value) {
+        SharedPreferences.Editor editor = getPref (context).edit ();
+        editor.putString (key, value);
         editor.apply ();
     }
 }

@@ -3,11 +3,15 @@ package actiknow.com.actipatient.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -19,11 +23,14 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -36,13 +43,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bugsnag.android.Bugsnag;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -70,10 +78,12 @@ import static actiknow.com.actipatient.utils.AppConfigTags.hindi_language_code;
 public class MainActivity extends AppCompatActivity {
     public static ArrayList<Question> QuestionList = new ArrayList<> ();
     public static int survey_type_id_temp = 0;
+    protected PowerManager.WakeLock mWakeLock;
     UserDetailsPref userDetailPref;
     String android_id;
     int version_code;
     CoordinatorLayout clMain;
+    RelativeLayout rlMain;
     TextView tvHeading;
     TextView tvStart;
     FloatingActionButton fabSettings;
@@ -83,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
     ImageView ivLogo;
     ProgressDialog progressDialog;
     CustomSpinnerAdapter adapter;
+    ProgressBar progressBar;
+
+    Configuration config;
 
     @SuppressLint("NewApi")
     public static final void recreateActivityCompat (final Activity a) {
@@ -108,17 +121,22 @@ public class MainActivity extends AppCompatActivity {
         isLogin ();
         getSurveyTypes ();
         checkApplicationStatus ();
-//        loadDefaultFragment ();
+
+        if (! userDetailPref.getBooleanPref (this, UserDetailsPref.LOGGED_IN_SESSION)) {
+            checkVersionUpdate ();
+        }
     }
 
     private void initView () {
         clMain = (CoordinatorLayout) findViewById (R.id.clMain);
+        rlMain = (RelativeLayout) findViewById (R.id.rlMain);
         tvHeading = (TextView) findViewById (R.id.tvHeading);
         tvStart = (TextView) findViewById (R.id.tvStart);
         fabSettings = (FloatingActionButton) findViewById (R.id.fabSettings);
         tvHindi = (TextView) findViewById (R.id.tvHindi);
         tvEnglish = (TextView) findViewById (R.id.tvEnglish);
         tvSurveyType = (TextView) findViewById (R.id.tvSurveyType);
+        progressBar = (ProgressBar) findViewById (R.id.progressBar);
         ivLogo = (ImageView) findViewById (R.id.ivHospitalLogo);
     }
 
@@ -135,29 +153,55 @@ public class MainActivity extends AppCompatActivity {
         }
         version_code = pInfo.versionCode;
 
+        config = getResources ().getConfiguration ();
+
+          /* This code together with the one in onDestroy()
+         * will make the screen be always on until this Activity gets destroyed. */
+        final PowerManager pm = (PowerManager) getSystemService (Context.POWER_SERVICE);
+        this.mWakeLock = pm.newWakeLock (PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        this.mWakeLock.acquire ();
+
         adapter = new CustomSpinnerAdapter (this, R.layout.spinner_item, Constants.surveyTypeList);
         Utils.setTypefaceToAllViews (this, tvHeading);
-        try {
-            Picasso.with (this).load (userDetailPref.getStringPref (this, UserDetailsPref.HOSPITAL_LOGO)).into (ivLogo);
-        } catch (Exception e) {
-            e.printStackTrace ();
-        }
+
+        Glide.with (this)
+                .load (userDetailPref.getStringPref (this, UserDetailsPref.HOSPITAL_LOGO))
+                .listener (new RequestListener<String, GlideDrawable> () {
+                    @Override
+                    public boolean onException (Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        progressBar.setVisibility (View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady (GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        progressBar.setVisibility (View.GONE);
+                        return false;
+                    }
+                })
+                .into (ivLogo);
+
+
         switch (userDetailPref.getStringPref (this, UserDetailsPref.LANGUAGE)) {
             case AppConfigTags.hindi_language_code:
                 changeLanguage (userDetailPref.getStringPref (this, UserDetailsPref.LANGUAGE));
                 tvHeading.setText (userDetailPref.getStringPref (this, AppConfigTags.HOSPITAL_NAME) + " " + getResources ().getString (R.string.activity_main_text_heading));
                 tvStart.setText (getResources ().getString (R.string.activity_main_button_start_survey));
                 changeLanguage (AppConfigTags.hindi_language_code);
+                tvHindi.setTextColor (getResources ().getColor (R.color.text_color_white));
+                tvEnglish.setTextColor (getResources ().getColor (R.color.app_text_color));
                 tvEnglish.setBackgroundResource (R.drawable.button_white);
-                tvHindi.setBackgroundResource (R.drawable.button_green);
+                tvHindi.setBackgroundResource (R.drawable.button_language);
                 break;
             case AppConfigTags.english_language_code:
                 changeLanguage (userDetailPref.getStringPref (this, UserDetailsPref.LANGUAGE));
                 tvHeading.setText (getResources ().getString (R.string.activity_main_text_heading) + " " + userDetailPref.getStringPref (MainActivity.this, AppConfigTags.HOSPITAL_NAME));
                 tvStart.setText (getResources ().getString (R.string.activity_main_button_start_survey));
                 changeLanguage (AppConfigTags.english_language_code);
+                tvHindi.setTextColor (getResources ().getColor (R.color.app_text_color));
+                tvEnglish.setTextColor (getResources ().getColor (R.color.text_color_white));
                 tvHindi.setBackgroundResource (R.drawable.button_white);
-                tvEnglish.setBackgroundResource (R.drawable.button_green);
+                tvEnglish.setBackgroundResource (R.drawable.button_language);
                 break;
         }
     }
@@ -181,9 +225,10 @@ public class MainActivity extends AppCompatActivity {
                 changeLanguage (hindi_language_code);
                 tvHeading.setText (userDetailPref.getStringPref (MainActivity.this, AppConfigTags.HOSPITAL_NAME) + " " + getResources ().getString (R.string.activity_main_text_heading));
                 tvStart.setText (getResources ().getString (R.string.activity_main_button_start_survey));
+                tvHindi.setTextColor (getResources ().getColor (R.color.text_color_white));
+                tvEnglish.setTextColor (getResources ().getColor (R.color.app_text_color));
                 tvEnglish.setBackgroundResource (R.drawable.button_white);
-                tvHindi.setBackgroundResource (R.drawable.button_green);
-//                recreateActivityCompat (MainActivity.this);
+                tvHindi.setBackgroundResource (R.drawable.button_language);
 
             }
         });
@@ -193,11 +238,149 @@ public class MainActivity extends AppCompatActivity {
                 changeLanguage (english_language_code);
                 tvHeading.setText (getResources ().getString (R.string.activity_main_text_heading) + " " + userDetailPref.getStringPref (MainActivity.this, AppConfigTags.HOSPITAL_NAME));
                 tvStart.setText (getResources ().getString (R.string.activity_main_button_start_survey));
+                tvHindi.setTextColor (getResources ().getColor (R.color.app_text_color));
+                tvEnglish.setTextColor (getResources ().getColor (R.color.text_color_white));
                 tvHindi.setBackgroundResource (R.drawable.button_white);
-                tvEnglish.setBackgroundResource (R.drawable.button_green);
-//                recreateActivityCompat (MainActivity.this);
+                tvEnglish.setBackgroundResource (R.drawable.button_language);
             }
         });
+    }
+
+    private void checkVersionUpdate () {
+        if (NetworkConnection.isNetworkAvailable (this)) {
+            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_CHECKVERSION, true);
+            StringRequest strRequest1 = new StringRequest (Request.Method.GET, AppConfigURL.URL_CHECKVERSION,
+                    new com.android.volley.Response.Listener<String> () {
+                        @Override
+                        public void onResponse (String response) {
+                            Utils.showLog (Log.INFO, "" + AppConfigTags.SERVER_RESPONSE, response, true);
+                            if (response != null) {
+                                try {
+                                    JSONObject jsonObj = new JSONObject (response);
+                                    boolean error = jsonObj.getBoolean (AppConfigTags.ERROR);
+                                    String message = jsonObj.getString (AppConfigTags.MESSAGE);
+
+                                    if (! error) {
+                                        int db_version_code = jsonObj.getInt (AppConfigTags.VERSION_CODE);
+                                        String db_version_name = jsonObj.getString (AppConfigTags.VERSION_NAME);
+                                        String version_updated_on = jsonObj.getString (AppConfigTags.VERSION_UPDATED_ON);
+                                        int version_update_critical = jsonObj.getInt (AppConfigTags.VERSION_UPDATE_CRITICAL);
+
+                                        if (db_version_code > version_code) {
+                                            switch (version_update_critical) {
+                                                case 0:
+                                                    userDetailPref.putBooleanPref (MainActivity.this, userDetailPref.LOGGED_IN_SESSION, true);
+                                                    new MaterialDialog.Builder (MainActivity.this)
+                                                            .content (R.string.dialog_text_new_version_available)
+                                                            .positiveColor (getResources ().getColor (R.color.app_text_color))
+                                                            .contentColor (getResources ().getColor (R.color.app_text_color))
+                                                            .negativeColor (getResources ().getColor (R.color.app_text_color))
+                                                            .typeface (SetTypeFace.getTypeface (MainActivity.this), SetTypeFace.getTypeface (MainActivity.this))
+                                                            .canceledOnTouchOutside (false)
+                                                            .cancelable (false)
+                                                            .positiveText (R.string.dialog_action_update)
+                                                            .negativeText (R.string.dialog_action_ignore)
+                                                            .onPositive (new MaterialDialog.SingleButtonCallback () {
+                                                                @Override
+                                                                public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                                    final String appPackageName = getPackageName (); // getPackageName() from Context or Activity object
+                                                                    try {
+                                                                        startActivity (new Intent (Intent.ACTION_VIEW, Uri.parse ("market://details?id=" + appPackageName)));
+                                                                    } catch (android.content.ActivityNotFoundException anfe) {
+                                                                        startActivity (new Intent (Intent.ACTION_VIEW, Uri.parse ("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                                                                    }
+                                                                }
+                                                            })
+                                                            .onNegative (new MaterialDialog.SingleButtonCallback () {
+                                                                @Override
+                                                                public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                                    dialog.dismiss ();
+                                                                }
+                                                            }).show ();
+                                                    break;
+                                                case 1:
+                                                    new MaterialDialog.Builder (MainActivity.this)
+                                                            .content (R.string.dialog_text_new_version_available)
+                                                            .positiveColor (getResources ().getColor (R.color.app_text_color))
+                                                            .contentColor (getResources ().getColor (R.color.app_text_color))
+                                                            .negativeColor (getResources ().getColor (R.color.app_text_color))
+                                                            .typeface (SetTypeFace.getTypeface (MainActivity.this), SetTypeFace.getTypeface (MainActivity.this))
+                                                            .canceledOnTouchOutside (false)
+                                                            .cancelable (false)
+
+                                                            .cancelListener (new DialogInterface.OnCancelListener () {
+                                                                @Override
+                                                                public void onCancel (DialogInterface dialog) {
+
+                                                                }
+                                                            })
+                                                            .positiveText (R.string.dialog_action_update)
+//                                                            .negativeText (R.string.dialog_action_close)
+                                                            .onPositive (new MaterialDialog.SingleButtonCallback () {
+                                                                @Override
+                                                                public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                                    final String appPackageName = getPackageName (); // getPackageName() from Context or Activity object
+                                                                    try {
+                                                                        startActivity (new Intent (Intent.ACTION_VIEW, Uri.parse ("market://details?id=" + appPackageName)));
+                                                                    } catch (android.content.ActivityNotFoundException anfe) {
+                                                                        startActivity (new Intent (Intent.ACTION_VIEW, Uri.parse ("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                                                                    }
+                                                                }
+                                                            })
+//                                                            .onNegative (new MaterialDialog.SingleButtonCallback () {
+//                                                                @Override
+//                                                                public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                                                    finish ();
+//                                                                    overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
+//                                                                }
+//                                                            })
+                                                            .show ();
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace ();
+                                }
+                            } else {
+                                Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                            }
+                        }
+                    }
+
+                    ,
+                    new Response.ErrorListener ()
+
+                    {
+                        @Override
+                        public void onErrorResponse (VolleyError error) {
+                            Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                        }
+                    }
+
+            )
+
+            {
+                @Override
+                protected Map<String, String> getParams () throws AuthFailureError {
+                    Map<String, String> params = new Hashtable<String, String> ();
+                    Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
+                    return params;
+                }
+
+                @Override
+                public Map<String, String> getHeaders () throws AuthFailureError {
+                    Map<String, String> params = new HashMap<> ();
+                    params.put (AppConfigTags.HEADER_API_KEY, Constants.api_key);
+                    params.put (AppConfigTags.HEADER_HOSPITAL_LOGIN_KEY, userDetailPref.getStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_LOGIN_KEY));
+                    Utils.showLog (Log.INFO, AppConfigTags.HEADERS_SENT_TO_THE_SERVER, "" + params, false);
+                    return params;
+                }
+            };
+            Utils.sendRequest (strRequest1, 60);
+        } else {
+            checkVersionUpdate ();
+        }
     }
 
     private void showAccessPINDialog () {
@@ -229,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
                         SpannableString s2 = new SpannableString (getResources ().getString (R.string.snackbar_text_invalid_access_pin));
                         s2.setSpan (new TypefaceSpan (MainActivity.this, Constants.font_name), 0, s.length (), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         etAccessPINTemp.setError (s2);
-//                        Utils.showSnackBar (MainActivity.this, clMain, getResources ().getString (R.string.snackbar_text_invalid_access_pin), Snackbar.LENGTH_LONG, null, null);
+                        Utils.showSnackBar (MainActivity.this, clMain, getResources ().getString (R.string.snackbar_text_invalid_access_pin), Snackbar.LENGTH_LONG, null, null);
                     }
                 }
             }
@@ -474,6 +657,8 @@ public class MainActivity extends AppCompatActivity {
 
         dialog.getWindow ().setLayout (CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
         dialog.show ();
+
+        Utils.hideSoftKeyboard (this);
     }
 
     private void changeLanguage (String language) {
@@ -494,6 +679,14 @@ public class MainActivity extends AppCompatActivity {
                 .typeface (SetTypeFace.getTypeface (this), SetTypeFace.getTypeface (this))
                 .build ();
 
+        if (config.smallestScreenWidthDp >= 600) {
+            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getActionButton (DialogAction.NEUTRAL).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+        } else {
+            // fall-back code goes here
+        }
+
 
         TextView tvSubscriptionExpiry = (TextView) dialog.getCustomView ().findViewById (R.id.tvSubscriptionExpiry);
         TextView tvSubscriptionStatus = (TextView) dialog.getCustomView ().findViewById (R.id.tvSubscriptionStatus);
@@ -502,7 +695,7 @@ public class MainActivity extends AppCompatActivity {
         Utils.setTypefaceToAllViews (this, tvSubscriptionExpiry);
 
         tvSubscriptionStatus.setText (userDetailPref.getStringPref (this, UserDetailsPref.SUBSCRIPTION_STATUS));
-        tvSubscriptionExpiry.setText (Utils.convertTimeFormat (userDetailPref.getStringPref (this, UserDetailsPref.SUBSCRIPTION_EXPIRES), "yyyy-MM-dd HH:mm:ss", "dd-MMM-yyyy"));
+        tvSubscriptionExpiry.setText (Utils.convertTimeFormat (userDetailPref.getStringPref (this, UserDetailsPref.SUBSCRIPTION_EXPIRES), "yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy"));
 
         spCategory.setAdapter (adapter);
 
@@ -599,7 +792,7 @@ public class MainActivity extends AppCompatActivity {
                                     intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity (intent);
                                     overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
-                                } catch (JSONException e) {
+                                } catch (Exception e) {
                                     e.printStackTrace ();
                                     progressDialog.dismiss ();
                                     Utils.showSnackBar (MainActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
@@ -683,11 +876,7 @@ public class MainActivity extends AppCompatActivity {
                                     Intent intent = new Intent (MainActivity.this, SurveyActivity.class);
                                     startActivity (intent);
                                     overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
-                                } catch (JSONException e) {
-                                    progressDialog.dismiss ();
-                                    Utils.showSnackBar (MainActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
-                                    e.printStackTrace ();
-                                } catch (UnsupportedEncodingException e) {
+                                } catch (Exception e) {
                                     progressDialog.dismiss ();
                                     Utils.showSnackBar (MainActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     e.printStackTrace ();
@@ -742,6 +931,7 @@ public class MainActivity extends AppCompatActivity {
     private void checkApplicationStatus () {
         android_id = Settings.Secure.getString (this.getContentResolver (), Settings.Secure.ANDROID_ID);
         if (NetworkConnection.isNetworkAvailable (this)) {
+            Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_initializing), false);
             Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.URL_CHECKLOGIN + "/" + version_code + "/" + userDetailPref.getIntPref (this, UserDetailsPref.DEVICE_ID) + "/" + android_id, true);
             StringRequest strRequest = new StringRequest (Request.Method.GET, AppConfigURL.URL_CHECKLOGIN + "/" + version_code + "/" + userDetailPref.getIntPref (this, UserDetailsPref.DEVICE_ID) + "/" + android_id,
                     new Response.Listener<String> () {
@@ -757,7 +947,6 @@ public class MainActivity extends AppCompatActivity {
                                     if (status == 0) {
                                         checkApplicationStatus ();
                                     } else if (status != 1) {
-                                        Utils.showSnackBar (MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
                                         userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.LANGUAGE, AppConfigTags.english_language_code);
                                         userDetailPref.putIntPref (MainActivity.this, UserDetailsPref.DEVICE_ID, 0);
                                         userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.DEVICE_LOCATION, "");
@@ -772,15 +961,24 @@ public class MainActivity extends AppCompatActivity {
 
                                         changeLanguage (AppConfigTags.english_language_code);
 
+                                        Utils.showSnackBar (MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
+                                        Utils.showToast (MainActivity.this, message, true);
+
                                         Intent intent = new Intent (MainActivity.this, LoginActivity.class);
                                         intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity (intent);
-                                        MainActivity.this.overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
+                                        overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
                                     }
-                                } catch (JSONException e) {
+                                    if (status == 1) {
+                                        rlMain.setVisibility (View.VISIBLE);
+                                    }
+                                    progressDialog.dismiss ();
+                                } catch (Exception e) {
+                                    progressDialog.dismiss ();
                                     e.printStackTrace ();
                                 }
                             } else {
+                                progressDialog.dismiss ();
                                 Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
                             }
                         }
@@ -788,6 +986,7 @@ public class MainActivity extends AppCompatActivity {
                     new Response.ErrorListener () {
                         @Override
                         public void onErrorResponse (VolleyError error) {
+                            progressDialog.dismiss ();
                             Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
                         }
                     }) {
@@ -803,10 +1002,10 @@ public class MainActivity extends AppCompatActivity {
             strRequest.setRetryPolicy (new DefaultRetryPolicy (DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             Utils.sendRequest (strRequest, 30);
         } else {
-            checkApplicationStatus ();
+            progressDialog.dismiss ();
+//            checkApplicationStatus ();
         }
     }
-
 
     private void getSurveyTypes () {
         if (NetworkConnection.isNetworkAvailable (this)) {
@@ -851,7 +1050,7 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }
                                     }
-                                } catch (JSONException e) {
+                                } catch (Exception e) {
                                     e.printStackTrace ();
                                 }
                             } else {
@@ -903,7 +1102,9 @@ public class MainActivity extends AppCompatActivity {
                                     String message = jsonObj.getString (AppConfigTags.MESSAGE);
                                     if (! error) {
                                         Utils.showSnackBar (MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
+//                                        Utils.showToast (MainActivity.this, message, true);
                                     } else {
+//                                        Utils.showToast (MainActivity.this, message, true);
                                         Utils.showSnackBar (MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_retry), new View.OnClickListener () {
                                             @Override
                                             public void onClick (View v) {
@@ -911,13 +1112,15 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         });
                                     }
-                                } catch (JSONException e) {
+                                } catch (Exception e) {
                                     progressDialog.dismiss ();
+//                                    Utils.showToast (MainActivity.this, getResources ().getString (R.string.snackbar_text_exception_occurred), true);
                                     Utils.showSnackBar (MainActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     e.printStackTrace ();
                                 }
                             } else {
                                 Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+//                                Utils.showToast (MainActivity.this, getResources ().getString (R.string.snackbar_text_error_occurred), true);
                                 Utils.showSnackBar (MainActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                             }
                             progressDialog.dismiss ();
@@ -928,6 +1131,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onErrorResponse (VolleyError error) {
                             progressDialog.dismiss ();
                             Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+//                            Utils.showToast (MainActivity.this, getResources ().getString (R.string.snackbar_text_error_occurred), true);
                             Utils.showSnackBar (MainActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                         }
                     }) {
@@ -949,6 +1153,7 @@ public class MainActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest1, 60);
         } else {
+//            Utils.showToast (MainActivity.this, getResources ().getString (R.string.snackbar_text_no_internet_connection_available), true);
             Utils.showSnackBar (MainActivity.this, clMain, getResources ().getString (R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_go_to_settings), new View.OnClickListener () {
                 @Override
                 public void onClick (View v) {
@@ -962,11 +1167,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed () {
-        new MaterialDialog.Builder (this)
+        MaterialDialog dialog = new MaterialDialog.Builder (this)
                 .content (R.string.dialog_text_quit_application)
-                .positiveColor (getResources ().getColor (R.color.colorPrimary))
-                .contentColor (getResources ().getColor (R.color.colorPrimary))
-                .negativeColor (getResources ().getColor (R.color.colorPrimary))
+                .positiveColor (getResources ().getColor (R.color.app_text_color))
+                .contentColor (getResources ().getColor (R.color.app_text_color))
+                .negativeColor (getResources ().getColor (R.color.app_text_color))
                 .typeface (SetTypeFace.getTypeface (this), SetTypeFace.getTypeface (this))
                 .canceledOnTouchOutside (false)
                 .cancelable (false)
@@ -975,167 +1180,26 @@ public class MainActivity extends AppCompatActivity {
                 .onPositive (new MaterialDialog.SingleButtonCallback () {
                     @Override
                     public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        userDetailPref.putBooleanPref (MainActivity.this, UserDetailsPref.LOGGED_IN_SESSION, false);
                         finish ();
                         overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
                     }
-                }).show ();
+                }).build ();
+
+
+        if (config.smallestScreenWidthDp >= 600) {
+            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
+        } else {
+            // fall-back code goes here
+        }
+        dialog.show ();
     }
 
-    private void showApplicationUpdateDialog (boolean is_critical) {
-        new MaterialDialog.Builder (this)
-                .content (getResources ().getString (R.string.dialog_text_update_available))
-                .positiveText (getResources ().getString (R.string.dialog_action_update))
-                .negativeText (getResources ().getString (R.string.dialog_action_ignore))
-                .onPositive (new MaterialDialog.SingleButtonCallback () {
-                    @Override
-                    public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                        logoutActiveSessions (username, password);
-                    }
-                })
-                .onNegative (new MaterialDialog.SingleButtonCallback () {
-                    @Override
-                    public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    }
-                })
-                .typeface (SetTypeFace.getTypeface (this), SetTypeFace.getTypeface (this))
-                .show ();
+    @Override
+    public void onDestroy () {
+        this.mWakeLock.release ();
+        super.onDestroy ();
     }
-
-
-    /*
-    public void checkAppVersion () {
-        Log.d ("VERSION CHECK API", Constants.VERSION_CHECK_API);
-        StringRequest strRequest = new StringRequest (Request.Method.GET, Constants.VERSION_CHECK_API,
-                new Response.Listener<String> () {
-                    @Override
-                    public void onResponse (String response) {
-                        Log.d ("SERVER_RESPONSE", response);
-                        try {
-                            PackageInfo pInfo = null;
-                            pInfo = getPackageManager ().getPackageInfo (getPackageName (), 0);
-                            int app_version_code = pInfo.versionCode;
-                            Log.e ("Version code", "" + pInfo.versionCode);
-
-                            JSONObject jsonObject = new JSONObject (response);
-                            int db_version_code = jsonObject.getInt ("version_code");
-                            int is_critical = jsonObject.getInt ("is_critical");
-
-
-                            if (db_version_code > app_version_code) {
-                                AlertDialog.Builder builder;
-                                AlertDialog dialog;
-                                switch (is_critical) {
-                                    case 0:
-                                        objSharedPreferences.edit ().putBoolean (Constants.LOGGED_IN_SESSION, true).commit ();
-
-                                        builder = new AlertDialog.Builder (ShoutDefaultActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
-                                                .setIcon (android.R.drawable.ic_dialog_alert)
-                                                .setTitle (SetTypeFace.applyTypefaceSpan (ShoutDefaultActivity.this, "New Update Available"))
-                                                .setMessage (SetTypeFace.applyTypefaceSpan (ShoutDefaultActivity.this, "New version of the application is available. Please update"))
-                                                .setNegativeButton ("Ignore", new DialogInterface.OnClickListener () {
-                                                    @Override
-                                                    public void onClick (DialogInterface dialog, int which) {
-                                                        dialog.dismiss ();
-                                                    }
-                                                })
-                                                .setPositiveButton ("Update", null);
-                                        dialog = builder.create ();
-
-                                        dialog.setOnShowListener (new DialogInterface.OnShowListener () {
-                                            @Override
-                                            public void onShow (DialogInterface dialog) {
-                                                AlertDialog alertDialog = (AlertDialog) dialog;
-                                                Button button = alertDialog.getButton (DialogInterface.BUTTON_POSITIVE);
-                                                button.setTypeface (SetTypeFace.getTypeface (ShoutDefaultActivity.this));
-                                                button = alertDialog.getButton (DialogInterface.BUTTON_NEGATIVE);
-                                                button.setTypeface (SetTypeFace.getTypeface (ShoutDefaultActivity.this));
-                                            }
-                                        });
-                                        dialog.show ();
-
-                                        dialog.setCancelable (false);
-                                        dialog.getButton (AlertDialog.BUTTON_POSITIVE).setOnClickListener (new View.OnClickListener () {
-                                            @Override
-                                            public void onClick (View v) {
-                                                final String appPackageName = getPackageName (); // getPackageName() from Context or Activity object
-                                                try {
-                                                    startActivity (new Intent (Intent.ACTION_VIEW, Uri.parse ("market://details?id=" + appPackageName)));
-                                                } catch (android.content.ActivityNotFoundException anfe) {
-                                                    startActivity (new Intent (Intent.ACTION_VIEW, Uri.parse ("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                                                }
-                                            }
-                                        });
-
-
-                                        break;
-                                    case 1:
-                                        builder = new AlertDialog.Builder (ShoutDefaultActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
-                                                .setIcon (android.R.drawable.ic_dialog_alert)
-                                                .setTitle (SetTypeFace.applyTypefaceSpan (ShoutDefaultActivity.this, "Update Required"))
-                                                .setMessage (SetTypeFace.applyTypefaceSpan (ShoutDefaultActivity.this, "New version of the application is available. Please update"))
-                                                .setNegativeButton (SetTypeFace.applyTypefaceSpan (ShoutDefaultActivity.this, "Close"), new DialogInterface.OnClickListener () {
-                                                    @Override
-                                                    public void onClick (DialogInterface dialog, int which) {
-                                                        int pid = Process.myPid ();
-                                                        Process.killProcess (pid);
-                                                    }
-                                                })
-                                                .setPositiveButton (SetTypeFace.applyTypefaceSpan (ShoutDefaultActivity.this, "Update"), null);
-
-                                        dialog = builder.create ();
-                                        dialog.setOnShowListener (new DialogInterface.OnShowListener () {
-                                            @Override
-                                            public void onShow (DialogInterface dialog) {
-                                                AlertDialog alertDialog = (AlertDialog) dialog;
-                                                Button button = alertDialog.getButton (DialogInterface.BUTTON_POSITIVE);
-                                                button.setTypeface (SetTypeFace.getTypeface (ShoutDefaultActivity.this));
-                                                button = alertDialog.getButton (DialogInterface.BUTTON_NEGATIVE);
-                                                button.setTypeface (SetTypeFace.getTypeface (ShoutDefaultActivity.this));
-                                            }
-                                        });
-                                        dialog.show ();
-                                        dialog.setCancelable (false);
-                                        dialog.getButton (AlertDialog.BUTTON_POSITIVE).setOnClickListener (new View.OnClickListener () {
-                                            @Override
-                                            public void onClick (View v) {
-                                                final String appPackageName = getPackageName (); // getPackageName() from Context or Activity object
-                                                try {
-                                                    startActivity (new Intent (Intent.ACTION_VIEW, Uri.parse ("market://details?id=" + appPackageName)));
-                                                } catch (android.content.ActivityNotFoundException anfe) {
-                                                    startActivity (new Intent (Intent.ACTION_VIEW, Uri.parse ("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                                                }
-                                            }
-                                        });
-                                        break;
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace ();
-                        } catch (PackageManager.NameNotFoundException e) {
-                            e.printStackTrace ();
-                        }
-                    }
-                },
-                new Response.ErrorListener () {
-                    @Override
-                    public void onErrorResponse (VolleyError error) {
-                        Log.e ("VOLLEY_ERROR", error.toString ());
-                    }
-                }) {
-
-            @Override
-            protected Map<String, String> getParams () throws AuthFailureError {
-                Map<String, String> params = new Hashtable<String, String> ();
-                return params;
-            }
-        };
-
-        strRequest.setShouldCache (false);
-        AppController.getInstance ().addToRequestQueue (strRequest);
-        strRequest.setRetryPolicy (new DefaultRetryPolicy (2000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-    }
-*/
-
 }

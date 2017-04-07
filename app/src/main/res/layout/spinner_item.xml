@@ -12,13 +12,13 @@
         android:paddingTop="5dp"
         android:text="In-Patient"
         android:textColor="@color/app_text_color"
-        android:textSize="@dimen/text_size_large"/>
+        android:textSize="@dimen/text_size_medium"/>
     <TextView
         android:id="@+id/tvSurveyTypeID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="3dp"
         android:textColor="@color/app_text_color"
-        android:textSize="@dimen/text_size_large"
+        android:textSize="@dimen/text_size_medium"
         android:visibility="gone"/>
 </RelativeLayout>
