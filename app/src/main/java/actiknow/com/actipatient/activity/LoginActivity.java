@@ -18,7 +18,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -179,13 +178,13 @@ public class LoginActivity extends AppCompatActivity {
                 .typeface (SetTypeFace.getTypeface (this), SetTypeFace.getTypeface (this))
                 .build ();
 
-        if (config.smallestScreenWidthDp >= 600) {
-            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-        } else {
+//        if (config.smallestScreenWidthDp >= 600 && config.smallestScreenWidthDp <= 720) {
+//            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//        } else {
             // fall-back code goes here
-        }
+//        }
 
 
         dialog.show ();
@@ -206,13 +205,13 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }).build ();
 
-        if (config.smallestScreenWidthDp >= 600) {
-            dialog.getInputEditText ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-        } else {
+//        if (config.smallestScreenWidthDp >= 600 && config.smallestScreenWidthDp <= 720) {
+//            dialog.getInputEditText ().setTextSize (getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getContentView ().setTextSize (getResources ().getDimension (R.dimen.text_size_medium));
+//        } else {
             // fall-back code goes here
-        }
+//        }
 
 
         dialog.show ();
@@ -221,8 +220,8 @@ public class LoginActivity extends AppCompatActivity {
     private void sendLoginDetailsToServer (final String username, final String password) {
         if (NetworkConnection.isNetworkAvailable (LoginActivity.this)) {
             Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_logging_in), true);
-            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_LOGIN, true);
-            StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.URL_LOGIN,
+            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_LOGIN_DEVICE, true);
+            StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.URL_LOGIN_DEVICE,
                     new com.android.volley.Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {
@@ -246,6 +245,7 @@ public class LoginActivity extends AppCompatActivity {
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.HOSPITAL_LOGO, jsonObj.getString (AppConfigTags.HOSPITAL_LOGO));
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.HOSPITAL_LOGIN_KEY, jsonObj.getString (AppConfigTags.HOSPITAL_LOGIN_KEY));
                                             userDetailsPref.putIntPref (LoginActivity.this, UserDetailsPref.HOSPITAL_ACCESS_PIN, jsonObj.getInt (AppConfigTags.HOSPITAL_ACCESS_PIN));
+                                            userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.HOSPITAL_DEFAULT_PATIENT_ID, jsonObj.getString (AppConfigTags.HOSPITAL_DEFAULT_PATIENT_ID));
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.SUBSCRIPTION_STATUS, jsonObj.getString (AppConfigTags.SUBSCRIPTION_STATUS));
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.SUBSCRIPTION_STARTS, jsonObj.getString (AppConfigTags.SUBSCRIPTION_STARTS));
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.SUBSCRIPTION_EXPIRES, jsonObj.getString (AppConfigTags.SUBSCRIPTION_EXPIRES));
@@ -272,6 +272,7 @@ public class LoginActivity extends AppCompatActivity {
                                             });
                                             break;
                                     }
+                                    progressDialog.dismiss ();
                                 } catch (Exception e) {
                                     progressDialog.dismiss ();
                                     Utils.showSnackBar (LoginActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
@@ -399,8 +400,8 @@ public class LoginActivity extends AppCompatActivity {
     private void logoutActiveSessions (final String username, final String password) {
         if (NetworkConnection.isNetworkAvailable (LoginActivity.this)) {
             Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_please_wait), true);
-            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_LOGOUT_ACTIVESESSION, true);
-            StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.URL_LOGOUT_ACTIVESESSION,
+            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_LOGOUT_ACTIVE_SESSION, true);
+            StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.URL_LOGOUT_ACTIVE_SESSION,
                     new com.android.volley.Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {

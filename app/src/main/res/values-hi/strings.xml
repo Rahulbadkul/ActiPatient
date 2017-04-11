@@ -47,15 +47,15 @@
     <string name="dialog_text_quit_application">क्या आप एप्लीकेशन छोड़ना चाहते हैं?</string>
 
 
-    <string name="progress_dialog_text_loading">लोड हो रहा है...</string>
-    <string name="progress_dialog_text_generating_survey">कृपया प्रतीक्षा करें...</string>
-    <string name="progress_dialog_text_logging_out">लॉगआउट हो रहा है...</string>
-    <string name="progress_dialog_text_logging_in">लोगिन हो रहा है...</string>
-    <string name="progress_dialog_text_please_wait">कृपया प्रतीक्षा करें...</string>
-    <string name="progress_dialog_text_sending_request">अनुरोध भेजा जा रहा है...</string>
-    <string name="progress_dialog_text_submitting_responses">प्रतिक्रियाएं सबमिट हो रही है...
-    </string>
-    <string name="progress_dialog_text_initializing">एप्लीकेशन लोड हो रही है...</string>
+    <string name="progress_dialog_text_loading">लोड हो रहा है&#8230;</string>
+    <string name="progress_dialog_text_generating_survey">कृपया प्रतीक्षा करें&#8230;</string>
+    <string name="progress_dialog_text_logging_out">लॉगआउट हो रहा है&#8230;</string>
+    <string name="progress_dialog_text_logging_in">लोगिन हो रहा है&#8230;</string>
+    <string name="progress_dialog_text_please_wait">कृपया प्रतीक्षा करें&#8230;</string>
+    <string name="progress_dialog_text_sending_request">अनुरोध भेजा जा रहा है&#8230;</string>
+    <string name="progress_dialog_text_submitting_responses">प्रतिक्रियाएं सबमिट हो रही
+        है&#8230;</string>
+    <string name="progress_dialog_text_initializing">एप्लीकेशन लोड हो रही है&#8230;</string>
 
     <string name="snackbar_text_no_internet_connection_available">इंटरनेट कनेक्शन उपलब्ध नहीं है
     </string>
@@ -73,6 +73,7 @@
     </string>
     <string name="dialog_text_enter_username">अपना यूजरनाम दर्ज करे</string>
     <string name="dialog_text_would_you_like_to_comment">क्या आप टिप्पणी देना चाहेगें?</string>
+    <string name="dialog_text_enter_patient_id">पेशेंट की आईडी दर्ज करे</string>
     <string name="dialog_text_new_version_available">एप्लीकेशन का नया वर्शन उपलब्ध है। कृपया अपडेट
         करें
     </string>
@@ -83,6 +84,8 @@
     <string name="dialog_action_ok">ठीक</string>
     <string name="dialog_action_cancel">रद्द करें</string>
     <string name="dialog_action_logout">लोग आउट करें</string>
+    <string name="dialog_action_proceed">आगे बढ़ें</string>
+    <string name="dialog_action_continue_anonymous">गुमनाम आगे बढ़ें</string>
     <string name="dialog_action_submit">सबमिट करें</string>
     <string name="dialog_action_ignore">इग्नोर करें</string>
     <string name="dialog_action_update">अपडेट करें</string>

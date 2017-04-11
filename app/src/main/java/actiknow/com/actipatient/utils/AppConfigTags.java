@@ -29,6 +29,7 @@ public class AppConfigTags {
     public static final String HOSPITAL_LOGO = "hospital_logo";
     public static final String HOSPITAL_LOGIN_KEY = "hospital_login_key";
     public static final String HOSPITAL_ACCESS_PIN = "hospital_access_pin";
+    public static final String HOSPITAL_DEFAULT_PATIENT_ID = "hospital_default_patient_id";
     public static final String SUBSCRIPTION_STATUS = "subscription_status";
     public static final String SUBSCRIPTION_STARTS = "subscription_starts";
     public static final String SUBSCRIPTION_EXPIRES = "subscription_expires";

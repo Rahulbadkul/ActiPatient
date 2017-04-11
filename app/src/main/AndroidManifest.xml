@@ -28,11 +28,14 @@
             android:imeOptions="flagNoExtractUi"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden"/>
+
+
         <activity
             android:name=".activity.SurveyActivity"
             android:imeOptions="flagNoExtractUi"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden"/>
+
         <meta-data
             android:name="com.bugsnag.android.API_KEY"
             android:value="b2b4c756b3b88a72891033fa275309db"/>

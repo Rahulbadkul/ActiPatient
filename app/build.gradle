@@ -7,10 +7,9 @@ android {
         applicationId "actiknow.com.actipatient"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -27,23 +26,13 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.1.1'
-    compile 'com.android.support:cardview-v7:25.1.1'
     compile 'com.android.support:design:25.1.1'
+//    compile 'com.android.support:appcompat-v7:25.3.1'
+//    compile 'com.android.support:design:25.3.1'
     compile 'com.mcxiaoke.volley:library:1.0.19'
-//    compile 'com.wang.avi:library:1.0.5'
-//    compile 'com.nineoldandroids:library:2.4.0'
-    compile 'com.android.support:multidex:1.0.1'
-//    compile 'eu.davidea:flexible-adapter:5.0.0-b8'
-//    compile 'com.nightonke:jellytogglebutton:1.0.2'
-//    compile 'com.google.dagger:dagger:2.0'
-//    compile 'com.github.ganfra:material-spinner:1.1.1'
-//    annotationProcessor 'com.google.dagger:dagger-compiler:2.0'
     compile 'com.afollestad.material-dialogs:core:0.9.4.2'
-    compile 'com.afollestad.material-dialogs:commons:0.9.4.2'
     testCompile 'junit:junit:4.12'
 
     compile 'com.bugsnag:bugsnag-android:3.+'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-
-
 }

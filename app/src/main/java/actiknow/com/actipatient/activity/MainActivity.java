@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
@@ -19,11 +20,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -51,7 +52,6 @@ import com.bumptech.glide.request.target.Target;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -71,12 +71,8 @@ import actiknow.com.actipatient.utils.TypefaceSpan;
 import actiknow.com.actipatient.utils.UserDetailsPref;
 import actiknow.com.actipatient.utils.Utils;
 
-import static actiknow.com.actipatient.utils.AppConfigTags.english_language_code;
-import static actiknow.com.actipatient.utils.AppConfigTags.hindi_language_code;
-
 
 public class MainActivity extends AppCompatActivity {
-    public static ArrayList<Question> QuestionList = new ArrayList<> ();
     public static int survey_type_id_temp = 0;
     protected PowerManager.WakeLock mWakeLock;
     UserDetailsPref userDetailPref;
@@ -120,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         initListener ();
         isLogin ();
         getSurveyTypes ();
-        checkApplicationStatus ();
+        initApplication ();
 
         if (! userDetailPref.getBooleanPref (this, UserDetailsPref.LOGGED_IN_SESSION)) {
             checkVersionUpdate ();
@@ -216,13 +212,13 @@ public class MainActivity extends AppCompatActivity {
         tvStart.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick (View view) {
-                generateSurvey ();
+                showPatientIDInputDialog ();
             }
         });
         tvHindi.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick (View view) {
-                changeLanguage (hindi_language_code);
+                changeLanguage (AppConfigTags.hindi_language_code);
                 tvHeading.setText (userDetailPref.getStringPref (MainActivity.this, AppConfigTags.HOSPITAL_NAME) + " " + getResources ().getString (R.string.activity_main_text_heading));
                 tvStart.setText (getResources ().getString (R.string.activity_main_button_start_survey));
                 tvHindi.setTextColor (getResources ().getColor (R.color.text_color_white));
@@ -235,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         tvEnglish.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick (View view) {
-                changeLanguage (english_language_code);
+                changeLanguage (AppConfigTags.english_language_code);
                 tvHeading.setText (getResources ().getString (R.string.activity_main_text_heading) + " " + userDetailPref.getStringPref (MainActivity.this, AppConfigTags.HOSPITAL_NAME));
                 tvStart.setText (getResources ().getString (R.string.activity_main_button_start_survey));
                 tvHindi.setTextColor (getResources ().getColor (R.color.app_text_color));
@@ -248,8 +244,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkVersionUpdate () {
         if (NetworkConnection.isNetworkAvailable (this)) {
-            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_CHECKVERSION, true);
-            StringRequest strRequest1 = new StringRequest (Request.Method.GET, AppConfigURL.URL_CHECKVERSION,
+            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_CHECK_VERSION, true);
+            StringRequest strRequest1 = new StringRequest (Request.Method.GET, AppConfigURL.URL_CHECK_VERSION,
                     new com.android.volley.Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {
@@ -472,21 +468,29 @@ public class MainActivity extends AppCompatActivity {
         final TextView tv7 = (TextView) dialog.getCustomView ().findViewById (R.id.tv7);
         final TextView tv8 = (TextView) dialog.getCustomView ().findViewById (R.id.tv8);
         final TextView tv9 = (TextView) dialog.getCustomView ().findViewById (R.id.tv9);
-        final TextView tvBack = (TextView) dialog.getCustomView ().findViewById (R.id.tvBack);
+        final ImageView ivBack = (ImageView) dialog.getCustomView ().findViewById (R.id.ivBack);
 
-        tvBack.setOnTouchListener (new View.OnTouchListener () {
+        ivBack.setOnTouchListener (new View.OnTouchListener () {
             @Override
             public boolean onTouch (View v, MotionEvent event) {
                 if (event.getAction () == MotionEvent.ACTION_DOWN) {
-                    tvBack.setTextColor (getResources ().getColor (R.color.text_color_white));
-                    tvBack.setBackgroundResource (R.drawable.button_filled);
+                    ivBack.setBackgroundResource (R.drawable.button_filled);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        ivBack.setImageDrawable (getResources ().getDrawable (R.drawable.ic_delete_white, getApplicationContext ().getTheme ()));
+                    } else {
+                        ivBack.setImageDrawable (getResources ().getDrawable (R.drawable.ic_delete_white));
+                    }
                     if (etAccessPINTemp.getText ().toString ().length () > 0) {
                         etAccessPINTemp.setText (etAccessPINTemp.getText ().toString ().substring (0, etAccessPINTemp.getText ().toString ().length () - 1));
                     }
                     return true;
                 } else if (event.getAction () == MotionEvent.ACTION_UP) {
-                    tvBack.setTextColor (getResources ().getColor (R.color.colorPrimary));
-                    tvBack.setBackgroundResource (R.drawable.button_empty);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        ivBack.setImageDrawable (getResources ().getDrawable (R.drawable.ic_delete, getApplicationContext ().getTheme ()));
+                    } else {
+                        ivBack.setImageDrawable (getResources ().getDrawable (R.drawable.ic_delete));
+                    }
+                    ivBack.setBackgroundResource (R.drawable.button_empty);
                     return true;
                 }
                 return false;
@@ -679,14 +683,13 @@ public class MainActivity extends AppCompatActivity {
                 .typeface (SetTypeFace.getTypeface (this), SetTypeFace.getTypeface (this))
                 .build ();
 
-        if (config.smallestScreenWidthDp >= 600) {
-            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getActionButton (DialogAction.NEUTRAL).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-        } else {
-            // fall-back code goes here
-        }
-
+//        if (config.smallestScreenWidthDp >= 600 && config.smallestScreenWidthDp <= 720) {
+//            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getActionButton (DialogAction.NEUTRAL).setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//        } else {
+        // fall-back code goes here
+//        }
 
         TextView tvSubscriptionExpiry = (TextView) dialog.getCustomView ().findViewById (R.id.tvSubscriptionExpiry);
         TextView tvSubscriptionStatus = (TextView) dialog.getCustomView ().findViewById (R.id.tvSubscriptionStatus);
@@ -760,11 +763,60 @@ public class MainActivity extends AppCompatActivity {
         dialog.show ();
     }
 
+    public void showPatientIDInputDialog () {
+        final MaterialDialog.Builder mBuilder = new MaterialDialog.Builder (this)
+                .content (R.string.dialog_text_enter_patient_id)
+                .contentColor (getResources ().getColor (R.color.app_text_color))
+                .positiveColor (getResources ().getColor (R.color.app_text_color))
+                .neutralColor (getResources ().getColor (R.color.app_text_color))
+                .typeface (SetTypeFace.getTypeface (this), SetTypeFace.getTypeface (this))
+                .inputRangeRes (1, 20, R.color.input_error_colour)
+                .inputType (InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS)
+                .alwaysCallInputCallback ()
+                .canceledOnTouchOutside (true)
+                .cancelable (true)
+                .positiveText (R.string.dialog_action_proceed)
+                .neutralText (R.string.dialog_action_continue_anonymous);
+
+        mBuilder.input (null, null, new MaterialDialog.InputCallback () {
+            @Override
+            public void onInput (MaterialDialog dialog, CharSequence input) {
+            }
+        });
+
+        mBuilder.onPositive (new MaterialDialog.SingleButtonCallback () {
+            @Override
+            public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                generateSurvey (dialog.getInputEditText ().getText ().toString ());
+            }
+        });
+
+        mBuilder.onNeutral (new MaterialDialog.SingleButtonCallback () {
+            @Override
+            public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                generateSurvey (userDetailPref.getStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_DEFAULT_PATIENT_ID));
+            }
+        });
+
+
+        MaterialDialog dialog = mBuilder.build ();
+
+//        if (config.smallestScreenWidthDp >= 600 && config.smallestScreenWidthDp <= 720) {
+//            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getInputEditText ().setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//        } else {
+        // fall-back code goes here
+//        }
+
+        dialog.show ();
+    }
+
     private void logOutFromDevice (final int device_id) {
         if (NetworkConnection.isNetworkAvailable (this)) {
             Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_logging_out), true);
-            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_LOGOUT, true);
-            StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.URL_LOGOUT,
+            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_LOGOUT_DEVICE, true);
+            StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.URL_LOGOUT_DEVICE,
                     new com.android.volley.Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {
@@ -781,6 +833,7 @@ public class MainActivity extends AppCompatActivity {
                                     userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_LOGO, "");
                                     userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_LOGIN_KEY, "");
                                     userDetailPref.putIntPref (MainActivity.this, UserDetailsPref.HOSPITAL_ACCESS_PIN, 0);
+                                    userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_DEFAULT_PATIENT_ID, "");
                                     userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.SUBSCRIPTION_STATUS, "");
                                     userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.SUBSCRIPTION_STARTS, "");
                                     userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.SUBSCRIPTION_EXPIRES, "");
@@ -842,40 +895,48 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void generateSurvey () {
+    private void generateSurvey (String patient_id) {
         if (NetworkConnection.isNetworkAvailable (this)) {
             Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_generating_survey), true);
-            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.URL_GETQUESTION + "/" + userDetailPref.getIntPref (this, AppConfigTags.DEVICE_ID) + "/" + userDetailPref.getStringPref (this, UserDetailsPref.LANGUAGE) + "/" + userDetailPref.getIntPref (this, UserDetailsPref.SURVEY_TYPE_ID) + "/" + Constants.patient_id, true);
-            StringRequest strRequest = new StringRequest (Request.Method.GET, AppConfigURL.URL_GETQUESTION + "/" + userDetailPref.getIntPref (this, AppConfigTags.DEVICE_ID) + "/" + userDetailPref.getStringPref (this, UserDetailsPref.LANGUAGE) + "/" + userDetailPref.getIntPref (this, UserDetailsPref.SURVEY_TYPE_ID) + "/" + Constants.patient_id,
+            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.URL_SURVEY_GENERATE + "/" + userDetailPref.getIntPref (this, AppConfigTags.DEVICE_ID) + "/" + userDetailPref.getStringPref (this, UserDetailsPref.LANGUAGE) + "/" + userDetailPref.getIntPref (this, UserDetailsPref.SURVEY_TYPE_ID) + "/" + patient_id, true);
+            StringRequest strRequest = new StringRequest (Request.Method.GET, AppConfigURL.URL_SURVEY_GENERATE + "/" + userDetailPref.getIntPref (this, AppConfigTags.DEVICE_ID) + "/" + userDetailPref.getStringPref (this, UserDetailsPref.LANGUAGE) + "/" + userDetailPref.getIntPref (this, UserDetailsPref.SURVEY_TYPE_ID) + "/" + patient_id,
                     new Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {
-                            QuestionList.clear ();
+                            Constants.QuestionList.clear ();
                             Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
                             if (response != null) {
                                 try {
                                     JSONObject jsonObj = new JSONObject (response);
-                                    JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.SURVEY_DETAILS);
-                                    Constants.survey_id = jsonObj.getString (AppConfigTags.SURVEY_ID);
-                                    for (int i = 0; i < jsonArray.length (); i++) {
-                                        JSONObject jsonObject = jsonArray.getJSONObject (i);
-                                        Question question = new Question ();
-                                        question.setQuestion_id (jsonObject.getInt (AppConfigTags.QUESTION_ID));
-                                        question.setQuestion_text (new String (jsonObject.getString (AppConfigTags.QUESTION_TEXT).getBytes ("ISO-8859-1"), "UTF-8"));
-                                        question.setQuestion_category_id (jsonObject.getInt (AppConfigTags.QUESTION_CATEGORY_ID));
-                                        JSONArray jsonArrayOptions = jsonObject.getJSONArray (AppConfigTags.OPTIONS);
-                                        for (int j = 0; j < jsonArrayOptions.length (); j++) {
-                                            JSONObject jsonObjectNew = jsonArrayOptions.getJSONObject (j);
-                                            QuestionOption questionOption = new QuestionOption ();
-                                            questionOption.setOption_id (jsonObjectNew.getInt (AppConfigTags.OPTION_ID));
-                                            questionOption.setOption_text (new String (jsonObjectNew.getString (AppConfigTags.OPTION_TEXT).getBytes ("ISO-8859-1"), "UTF-8").toUpperCase ());
-                                            question.addQuestionOption (questionOption);
+                                    boolean error = jsonObj.getBoolean (AppConfigTags.ERROR);
+                                    String message = jsonObj.getString (AppConfigTags.MESSAGE);
+                                    if (! error) {
+                                        JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.SURVEY_DETAILS);
+                                        Constants.survey_id = jsonObj.getString (AppConfigTags.SURVEY_ID);
+                                        Constants.patient_id = jsonObj.getString (AppConfigTags.PATIENT_ID);
+                                        for (int i = 0; i < jsonArray.length (); i++) {
+                                            JSONObject jsonObject = jsonArray.getJSONObject (i);
+                                            Question question = new Question ();
+                                            question.setQuestion_id (jsonObject.getInt (AppConfigTags.QUESTION_ID));
+                                            question.setQuestion_text (new String (jsonObject.getString (AppConfigTags.QUESTION_TEXT).getBytes ("ISO-8859-1"), "UTF-8"));
+                                            question.setQuestion_category_id (jsonObject.getInt (AppConfigTags.QUESTION_CATEGORY_ID));
+                                            JSONArray jsonArrayOptions = jsonObject.getJSONArray (AppConfigTags.OPTIONS);
+                                            for (int j = 0; j < jsonArrayOptions.length (); j++) {
+                                                JSONObject jsonObjectNew = jsonArrayOptions.getJSONObject (j);
+                                                QuestionOption questionOption = new QuestionOption ();
+                                                questionOption.setOption_id (jsonObjectNew.getInt (AppConfigTags.OPTION_ID));
+                                                questionOption.setOption_text (new String (jsonObjectNew.getString (AppConfigTags.OPTION_TEXT).getBytes ("ISO-8859-1"), "UTF-8").toUpperCase ());
+                                                question.addQuestionOption (questionOption);
+                                            }
+                                            Constants.QuestionList.add (question);
                                         }
-                                        MainActivity.QuestionList.add (question);
+                                        Intent intent = new Intent (MainActivity.this, SurveyActivity.class);
+                                        startActivity (intent);
+                                        overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
+                                    } else {
+                                        Utils.showSnackBar (MainActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     }
-                                    Intent intent = new Intent (MainActivity.this, SurveyActivity.class);
-                                    startActivity (intent);
-                                    overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
+                                    progressDialog.dismiss ();
                                 } catch (Exception e) {
                                     progressDialog.dismiss ();
                                     Utils.showSnackBar (MainActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
@@ -920,20 +981,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void isLogin () {
-        if (userDetailPref.getIntPref (MainActivity.this, UserDetailsPref.DEVICE_ID) == 0 || userDetailPref.getStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_LOGIN_KEY) == "") {
+        if (userDetailPref.getIntPref (MainActivity.this, UserDetailsPref.DEVICE_ID) == 0 || userDetailPref.getStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_LOGIN_KEY) == "") {// || userDetailPref.getStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_DEFAULT_PATIENT_ID) == "") {
             Intent myIntent = new Intent (this, LoginActivity.class);
             startActivity (myIntent);
         }
-        if (userDetailPref.getStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_LOGIN_KEY) == "")
+        if (userDetailPref.getStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_LOGIN_KEY) == "")// || userDetailPref.getStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_DEFAULT_PATIENT_ID) == "")
             finish ();
     }
 
-    private void checkApplicationStatus () {
+    private void initApplication () {
         android_id = Settings.Secure.getString (this.getContentResolver (), Settings.Secure.ANDROID_ID);
         if (NetworkConnection.isNetworkAvailable (this)) {
             Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_initializing), false);
-            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.URL_CHECKLOGIN + "/" + version_code + "/" + userDetailPref.getIntPref (this, UserDetailsPref.DEVICE_ID) + "/" + android_id, true);
-            StringRequest strRequest = new StringRequest (Request.Method.GET, AppConfigURL.URL_CHECKLOGIN + "/" + version_code + "/" + userDetailPref.getIntPref (this, UserDetailsPref.DEVICE_ID) + "/" + android_id,
+            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.URL_CHECK_STATUS_APPLICATION + "/" + version_code + "/" + userDetailPref.getIntPref (this, UserDetailsPref.DEVICE_ID) + "/" + android_id, true);
+            StringRequest strRequest = new StringRequest (Request.Method.GET, AppConfigURL.URL_CHECK_STATUS_APPLICATION + "/" + version_code + "/" + userDetailPref.getIntPref (this, UserDetailsPref.DEVICE_ID) + "/" + android_id,
                     new Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {
@@ -945,7 +1006,7 @@ public class MainActivity extends AppCompatActivity {
                                     String message = jsonObj.getString (AppConfigTags.MESSAGE);
                                     int status = jsonObj.getInt (AppConfigTags.STATUS);
                                     if (status == 0) {
-                                        checkApplicationStatus ();
+                                        initApplication ();
                                     } else if (status != 1) {
                                         userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.LANGUAGE, AppConfigTags.english_language_code);
                                         userDetailPref.putIntPref (MainActivity.this, UserDetailsPref.DEVICE_ID, 0);
@@ -955,6 +1016,7 @@ public class MainActivity extends AppCompatActivity {
                                         userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_LOGO, "");
                                         userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_LOGIN_KEY, "");
                                         userDetailPref.putIntPref (MainActivity.this, UserDetailsPref.HOSPITAL_ACCESS_PIN, 0);
+                                        userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_DEFAULT_PATIENT_ID, "");
                                         userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.SUBSCRIPTION_STATUS, "");
                                         userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.SUBSCRIPTION_STARTS, "");
                                         userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.SUBSCRIPTION_EXPIRES, "");
@@ -970,6 +1032,7 @@ public class MainActivity extends AppCompatActivity {
                                         overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
                                     }
                                     if (status == 1) {
+                                        userDetailPref.putStringPref (MainActivity.this, UserDetailsPref.HOSPITAL_DEFAULT_PATIENT_ID, jsonObj.getString (AppConfigTags.HOSPITAL_DEFAULT_PATIENT_ID));
                                         rlMain.setVisibility (View.VISIBLE);
                                     }
                                     progressDialog.dismiss ();
@@ -1003,14 +1066,14 @@ public class MainActivity extends AppCompatActivity {
             Utils.sendRequest (strRequest, 30);
         } else {
             progressDialog.dismiss ();
-//            checkApplicationStatus ();
+//            initApplication ();
         }
     }
 
     private void getSurveyTypes () {
         if (NetworkConnection.isNetworkAvailable (this)) {
-            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.URL_SURVEYTYPE, true);
-            StringRequest strRequest = new StringRequest (Request.Method.GET, AppConfigURL.URL_SURVEYTYPE,
+            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.URL_SURVEY_TYPE, true);
+            StringRequest strRequest = new StringRequest (Request.Method.GET, AppConfigURL.URL_SURVEY_TYPE,
                     new Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {
@@ -1187,13 +1250,14 @@ public class MainActivity extends AppCompatActivity {
                 }).build ();
 
 
-        if (config.smallestScreenWidthDp >= 600) {
-            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-        } else {
-            // fall-back code goes here
-        }
+//        if (config.smallestScreenWidthDp >= 600 && config.smallestScreenWidthDp <= 720) {
+//            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//        } else {
+        // fall-back code goes here
+//        }
+
         dialog.show ();
     }
 

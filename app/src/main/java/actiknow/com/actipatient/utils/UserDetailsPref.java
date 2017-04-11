@@ -14,6 +14,7 @@ public class UserDetailsPref {
     public static String HOSPITAL_LOGO = "hospital_logo";
     public static String HOSPITAL_LOGIN_KEY = "hospital_login_key";
     public static String HOSPITAL_ACCESS_PIN = "hospital_access_pin";
+    public static String HOSPITAL_DEFAULT_PATIENT_ID = "hospital_default_patient_id";
     public static String SUBSCRIPTION_STATUS = "subscription_status";
     public static String SUBSCRIPTION_STARTS = "subscription_starts";
     public static String SUBSCRIPTION_EXPIRES = "subscription_expires";

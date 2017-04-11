@@ -12,7 +12,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -49,7 +48,6 @@ import actiknow.com.actipatient.utils.SetTypeFace;
 import actiknow.com.actipatient.utils.UserDetailsPref;
 import actiknow.com.actipatient.utils.Utils;
 
-import static actiknow.com.actipatient.utils.Constants.patient_id;
 
 public class SurveyActivity extends AppCompatActivity {
     protected PowerManager.WakeLock mWakeLock;
@@ -148,7 +146,7 @@ public class SurveyActivity extends AppCompatActivity {
         llButtons.setVisibility (View.GONE);
 
 //        Log.e ("Questionsize", "" + MainActivity.QuestionList.size ());
-        question = MainActivity.QuestionList.get (0);
+        question = Constants.QuestionList.get (0);
 //        Log.e ("sud", "" + question.getQuestion_category_id ());
 //        Log.e ("question", "" + question.getQuestion_text ());
 
@@ -243,7 +241,7 @@ public class SurveyActivity extends AppCompatActivity {
         llSmiley.setVisibility (View.GONE);
         llButtons.setVisibility (View.VISIBLE);
 //        Log.e ("Questionnumber", "" + noques);
-        question = MainActivity.QuestionList.get (noques);
+        question = Constants.QuestionList.get (noques);
 //        Log.e ("karman", "" + question.getQuestion_text ());
         tvQues.setText (question.getQuestion_text ());
 //        Log.e ("sud", "" + question.getQuestion_category_id ());
@@ -312,7 +310,7 @@ public class SurveyActivity extends AppCompatActivity {
                 surveyResponse.setQuestion_category_id (question.getQuestion_category_id ());
                 surveyResponse.setOption_id (tv1.getId ());
                 Constants.surveyResponseList.add (surveyResponse);
-                if (noques == MainActivity.QuestionList.size () - 1) {
+                if (noques == Constants.QuestionList.size () - 1) {
                     showInputDialog ();
                     //noques++;
                     //getNewData();
@@ -331,7 +329,7 @@ public class SurveyActivity extends AppCompatActivity {
                 surveyResponse.setQuestion_category_id (question.getQuestion_category_id ());
                 surveyResponse.setOption_id (tv2.getId ());
                 Constants.surveyResponseList.add (surveyResponse);
-                if (noques == MainActivity.QuestionList.size () - 1) {
+                if (noques == Constants.QuestionList.size () - 1) {
                     showInputDialog ();
                     //noques++;
                     //getNewData();
@@ -349,7 +347,7 @@ public class SurveyActivity extends AppCompatActivity {
                 surveyResponse.setQuestion_category_id (question.getQuestion_category_id ());
                 surveyResponse.setOption_id (tv3.getId ());
                 Constants.surveyResponseList.add (surveyResponse);
-                if (noques == MainActivity.QuestionList.size () - 1) {
+                if (noques == Constants.QuestionList.size () - 1) {
                     showInputDialog ();
                     //noques++;
                     //getNewData();
@@ -368,7 +366,7 @@ public class SurveyActivity extends AppCompatActivity {
                 surveyResponse.setOption_id (tv4.getId ());
                 Constants.surveyResponseList.add (surveyResponse);
 
-                if (noques == MainActivity.QuestionList.size () - 1) {
+                if (noques == Constants.QuestionList.size () - 1) {
                     showInputDialog ();
                     //noques++;
                     //getNewData();
@@ -386,7 +384,7 @@ public class SurveyActivity extends AppCompatActivity {
                 surveyResponse.setQuestion_category_id (question.getQuestion_category_id ());
                 surveyResponse.setOption_id (tv5.getId ());
                 Constants.surveyResponseList.add (surveyResponse);
-                if (noques == MainActivity.QuestionList.size () - 1) {
+                if (noques == Constants.QuestionList.size () - 1) {
                     showInputDialog ();
                     //noques++;
                     //getNewData();
@@ -426,19 +424,19 @@ public class SurveyActivity extends AppCompatActivity {
         mBuilder.onPositive (new MaterialDialog.SingleButtonCallback () {
             @Override
             public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                UploadResponseToServer (dialog.getInputEditText ().getText ().toString (), getResponsesJSON (), String.valueOf (patient_id));
+                UploadResponseToServer (dialog.getInputEditText ().getText ().toString (), getResponsesJSON ());
             }
         });
 
         MaterialDialog dialog = mBuilder.build ();
 
-        if (config.smallestScreenWidthDp >= 600) {
-            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getInputEditText ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-        } else {
+//        if (config.smallestScreenWidthDp >= 600 && config.smallestScreenWidthDp <= 720) {
+//            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getInputEditText ().setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//        } else {
             // fall-back code goes here
-        }
+//        }
 
         dialog.show ();
     }
@@ -466,11 +464,11 @@ public class SurveyActivity extends AppCompatActivity {
         return jsonObject.toString ();
     }
 
-    private void UploadResponseToServer (final String comment, final String array, final String patient_id) {
+    private void UploadResponseToServer (final String comment, final String array) {
         if (NetworkConnection.isNetworkAvailable (this)) {
             Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_submitting_responses), false);
-            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_POSTSURVEY + "/" + Constants.survey_id, true);
-            StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.URL_POSTSURVEY + "/" + Constants.survey_id,
+            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.URL_SURVEY_SUBMIT + "/" + Constants.survey_id, true);
+            StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.URL_SURVEY_SUBMIT + "/" + Constants.survey_id,
                     new com.android.volley.Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {
@@ -488,6 +486,8 @@ public class SurveyActivity extends AppCompatActivity {
                                         handler.postDelayed (new Runnable () {
                                             @Override
                                             public void run () {
+                                                Constants.survey_id = "";
+                                                Constants.patient_id = "";
                                                 finish ();
                                                 overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
                                             }
@@ -496,7 +496,7 @@ public class SurveyActivity extends AppCompatActivity {
                                         Utils.showSnackBar (SurveyActivity.this, clMain, message, Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_retry), new View.OnClickListener () {
                                             @Override
                                             public void onClick (View v) {
-                                                UploadResponseToServer (comment, array, patient_id);
+                                                UploadResponseToServer (comment, array);
                                             }
                                         });
                                     }
@@ -523,7 +523,7 @@ public class SurveyActivity extends AppCompatActivity {
                 @Override
                 protected Map<String, String> getParams () throws AuthFailureError {
                     Map<String, String> params = new Hashtable<String, String> ();
-                    params.put (AppConfigTags.PATIENT_ID, patient_id);
+                    params.put (AppConfigTags.PATIENT_ID, Constants.patient_id);
                     params.put (AppConfigTags.RESPONSES_JSON, array);
                     params.put (AppConfigTags.COMMENTS, comment);
                     Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, false);
@@ -573,13 +573,13 @@ public class SurveyActivity extends AppCompatActivity {
                     }
                 }).build ();
 
-        if (config.smallestScreenWidthDp >= 600) {
-            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_DIP, getResources ().getDimension (R.dimen.text_size_medium));
-        } else {
+//        if (config.smallestScreenWidthDp >= 600 && config.smallestScreenWidthDp <= 720) {
+//            dialog.getActionButton (DialogAction.POSITIVE).setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getActionButton (DialogAction.NEGATIVE).setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//            dialog.getContentView ().setTextSize (TypedValue.COMPLEX_UNIT_SP, getResources ().getDimension (R.dimen.text_size_medium));
+//        } else {
             // fall-back code goes here
-        }
+//        }
         dialog.show ();
     }
 

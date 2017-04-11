@@ -1,6 +1,58 @@
 <resources>
-    <!-- Example customization of dimensions originally defined in res/values/dimens.xml
-         (such as screen margins) for screens with more than 820dp of available width. This
-         would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively). -->
-    <dimen name="activity_horizontal_margin">64dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">32dp</dimen>
+    <dimen name="activity_vertical_margin">32dp</dimen>
+
+    <dimen name="activity_margin">24dp</dimen>
+    <dimen name="activity_margin_small">12dp</dimen>
+    <dimen name="activity_margin_extra_small">6dp</dimen>
+    <dimen name="edittext_padding">12dp</dimen>
+    <dimen name="button_padding">12dp</dimen>
+
+    <dimen name="pin_button_size">60dp</dimen>
+    <dimen name="pin_button_margin">5dp</dimen>
+
+    <dimen name="top_bottom_margin">7dp</dimen>
+    <dimen name="floating_hint_margin">10dp</dimen>
+    <dimen name="text_size_extra_small">12sp</dimen>
+    <dimen name="text_size_small">16sp</dimen>
+    <dimen name="text_size_medium">20sp</dimen>
+    <dimen name="text_size_large">24sp</dimen>
+    <dimen name="text_size_extra_large">28sp</dimen>
+
+    <dimen name="text_size_login_title">40sp</dimen>
+
+    <dimen name="button_elevation">4dp</dimen>
+    <dimen name="cardview_elevation">4dp</dimen>
+
+    <dimen name="home_slider_height">400dp</dimen>
+
+    <dimen name="language_button_width">120dp</dimen>
+
+    <dimen name="heading_padding_top_bottom">60dp</dimen>
+    <dimen name="heading_padding_left_right">150dp</dimen>
+
+    <dimen name="start_button_padding_top_bottom">30dp</dimen>
+    <dimen name="start_button_padding_left_right">100dp</dimen>
+    <dimen name="start_button_margin_left_right">150dp</dimen>
+
+    <dimen name="hospital_logo_width">160dp</dimen>
+    <dimen name="hospital_logo_height">80dp</dimen>
+
+    <dimen name="actipatient_logo_width">130dp</dimen>
+    <dimen name="actipatient_logo_height">35dp</dimen>
+
+
+    <dimen name="question_padding_top_bottom">30dp</dimen>
+    <dimen name="question_padding_left_right">110dp</dimen>
+
+    <dimen name="option_button_padding_top_bottom">20dp</dimen>
+    <dimen name="option_button_padding_left_right">10dp</dimen>
+
+    <dimen name="smiley_button_height">120dp</dimen>
+
+    <dimen name="cardview_radius">20dp</dimen>
+
+    <dimen name="welcome_screen_bottom_padding">100dp</dimen>
+
 </resources>

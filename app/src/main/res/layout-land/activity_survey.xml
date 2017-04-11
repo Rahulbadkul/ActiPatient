@@ -211,7 +211,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:elevation="@dimen/button_elevation"
-                        android:src="@drawable/ic_v_happy"/>
+                        android:src="@drawable/ic_very_happy"/>
                 </RelativeLayout>
                 <RelativeLayout
                     android:layout_width="0dp"
@@ -227,7 +227,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:elevation="@dimen/button_elevation"
-                        android:src="@drawable/ic_v_hap"/>
+                        android:src="@drawable/ic_happy"/>
                 </RelativeLayout>
                 <RelativeLayout
                     android:layout_width="0dp"
@@ -242,7 +242,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:elevation="@dimen/button_elevation"
-                        android:src="@drawable/ic_v_ok"/>
+                        android:src="@drawable/ic_ok"/>
                 </RelativeLayout>
                 <RelativeLayout
                     android:layout_width="0dp"
@@ -258,7 +258,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:elevation="@dimen/button_elevation"
-                        android:src="@drawable/ic_v_sa"/>
+                        android:src="@drawable/ic_sad"/>
                 </RelativeLayout>
                 <RelativeLayout
                     android:layout_width="0dp"
@@ -274,7 +274,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:elevation="@dimen/button_elevation"
-                        android:src="@drawable/ic_v_sad"/>
+                        android:src="@drawable/ic_very_sad"/>
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>

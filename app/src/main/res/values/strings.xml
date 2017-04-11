@@ -37,14 +37,14 @@
     <string name="dialog_text_quit_application">Do you want to quit the application?</string>
 
 
-    <string name="progress_dialog_text_loading">Loading...</string>
-    <string name="progress_dialog_text_generating_survey">Generating Survey...</string>
-    <string name="progress_dialog_text_logging_out">Logging Out...</string>
-    <string name="progress_dialog_text_logging_in">Logging In...</string>
-    <string name="progress_dialog_text_please_wait">Please wait...</string>
-    <string name="progress_dialog_text_sending_request">Sending Request...</string>
-    <string name="progress_dialog_text_submitting_responses">Submitting Responses...</string>
-    <string name="progress_dialog_text_initializing">Initializing Application...</string>
+    <string name="progress_dialog_text_loading">Loading&#8230;</string>
+    <string name="progress_dialog_text_generating_survey">Generating Survey&#8230;</string>
+    <string name="progress_dialog_text_logging_out">Logging Out&#8230;</string>
+    <string name="progress_dialog_text_logging_in">Logging In&#8230;</string>
+    <string name="progress_dialog_text_please_wait">Please wait&#8230;</string>
+    <string name="progress_dialog_text_sending_request">Sending Request&#8230;</string>
+    <string name="progress_dialog_text_submitting_responses">Submitting Responses&#8230;</string>
+    <string name="progress_dialog_text_initializing">Initializing Application&#8230;</string>
 
     <string name="snackbar_text_no_internet_connection_available">No Internet Connection available
     </string>
@@ -61,12 +61,10 @@
         wish to logout from other sessions.
     </string>
 
-    <string name="dialog_text_update_available">New version of the application is available. Please
-        update
-    </string>
 
     <string name="dialog_text_enter_username">Please enter your username</string>
     <string name="dialog_text_would_you_like_to_comment">Would you like to comment?</string>
+    <string name="dialog_text_enter_patient_id">Please enter Patient ID/UHID</string>
     <string name="dialog_text_new_version_available">New version of the application is available.
         Please update
     </string>
@@ -80,6 +78,8 @@
     <string name="dialog_action_cancel">CANCEL</string>
     <string name="dialog_action_logout">LOGOUT</string>
     <string name="dialog_action_submit">SUBMIT</string>
+    <string name="dialog_action_proceed">PROCEED</string>
+    <string name="dialog_action_continue_anonymous">CONTINUE ANONYMOUS</string>
     <string name="dialog_action_ignore">IGNORE</string>
     <string name="dialog_action_update">UPDATE</string>
     <string name="dialog_action_close">CLOSE</string>
