@@ -535,34 +535,6 @@ public class Utils {
         return friendly + " ago";
     }
 
-    public static String encrypt(String input){
-        String key = "types=geocode";
-        byte[] crypted = null;
-        try{
-            SecretKeySpec skey = new SecretKeySpec(key.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, skey);
-            crypted = cipher.doFinal(input.getBytes());
-        }catch(Exception e){
-            System.out.println(e.toString());
-        }
-        return new String(Base64.encode(crypted,0));
-    }
-
-    public static String decrypt(String input){
-        String key = "types=1234567891234567";
-        byte[] output = null;
-        try{
-            SecretKeySpec skey = new SecretKeySpec(key.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, skey);
-            output = cipher.doFinal(Base64.decode(input,0));
-        }catch(Exception e){
-            System.out.println(e.toString());
-        }
-        return new String(output);
-    }
-
     public static void showProgressDialog (ProgressDialog progressDialog, String message, boolean cancelable) {
         // Initialize the progressDialog before calling this function
         CustomFontTextView tvMessage;
@@ -577,6 +549,42 @@ public class Utils {
             tvMessage.setVisibility (View.GONE);
         progressDialog.setCancelable (cancelable);
         progressDialog.setCanceledOnTouchOutside (cancelable);
+    }
+
+
+    public static String encrypt (String input) {
+        byte[] crypted = null;
+        try {
+            SecretKeySpec skey = new SecretKeySpec (Constants.encryption_key.getBytes (), "AES");
+            Cipher cipher = Cipher.getInstance ("AES/ECB/PKCS5Padding");
+            cipher.init (Cipher.ENCRYPT_MODE, skey);
+            crypted = cipher.doFinal (input.getBytes ());
+        } catch (Exception e) {
+            Log.e ("KARMAN", e.toString ());
+        }
+        if (crypted == null) {
+            return "";
+        } else {
+            return new String (Base64.encode (crypted, Base64.DEFAULT));
+        }
+    }
+
+    public static String decrypt (String input) {
+        byte[] output = null;
+        try {
+            SecretKeySpec skey2 = new SecretKeySpec (Constants.encryption_key.getBytes (), "AES");
+            Cipher cipher = Cipher.getInstance ("AES/ECB/PKCS5Padding");
+            cipher.init (Cipher.DECRYPT_MODE, skey2);
+//            output = cipher.doFinal (fromHexString (Base64.decode (input.getBytes (), Base64.DEFAULT).toString ()));
+            output = cipher.doFinal (Base64.decode (input.getBytes (), Base64.DEFAULT));
+        } catch (Exception e) {
+            Log.e ("KARMAN", e.toString ());
+        }
+        if (output == null) {
+            return "";
+        } else {
+            return new String (output);
+        }
     }
 }
 

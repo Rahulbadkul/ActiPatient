@@ -3,9 +3,11 @@ package actiknow.com.actipatient.utils;
 public class AppConfigURL {
 
     public static String HOST = "https://actipatient-api-cammy92.c9users.io/api/";
+
+//    public static String HOST = "http://actipatient.com/api/";
 //    public static String HOST = "http://ec2-52-42-89-17.us-west-2.compute.amazonaws.com/actipatient/api/";
     
-    public static String VERSION_NAME = "v1.2";
+    public static String VERSION_NAME = "v1.2.2";
 
 
     public static String URL_SURVEY_GENERATE = HOST + VERSION_NAME + "/survey/generate";

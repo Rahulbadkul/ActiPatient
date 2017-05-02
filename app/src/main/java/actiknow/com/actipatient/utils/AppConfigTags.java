@@ -11,7 +11,11 @@ public class AppConfigTags {
 
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
-    public static final String DEVICE_IDENTIICATION= "device_identification";
+    public static final String DEVICE_IDENTIFICATION = "device_identification";
+    public static final String DEVICE_API_LEVEL = "device_api_level";
+    public static final String DEVICE_OS_VERSION = "device_os_version";
+    public static final String DEVICE_MANUFACTURER = "device_manufacturer";
+    public static final String DEVICE_MODEL = "device_model";
 
 
     public static final String SURVEY_TYPE_ID = "survey_type_id";

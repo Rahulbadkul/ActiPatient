@@ -243,6 +243,8 @@ public class LoginActivity extends AppCompatActivity {
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.DEVICE_LOCATION, jsonObj.getString (AppConfigTags.DEVICE_LOCATION));
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.HOSPITAL_NAME, jsonObj.getString (AppConfigTags.HOSPITAL_NAME));
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.HOSPITAL_LOGO, jsonObj.getString (AppConfigTags.HOSPITAL_LOGO));
+//                                            userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.HOSPITAL_LOGIN_KEY, Utils.decrypt (jsonObj.getString (AppConfigTags.HOSPITAL_LOGIN_KEY)));
+//                                            userDetailsPref.putIntPref (LoginActivity.this, UserDetailsPref.HOSPITAL_ACCESS_PIN, Integer.parseInt (Utils.decrypt (jsonObj.getString (AppConfigTags.HOSPITAL_ACCESS_PIN))));
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.HOSPITAL_LOGIN_KEY, jsonObj.getString (AppConfigTags.HOSPITAL_LOGIN_KEY));
                                             userDetailsPref.putIntPref (LoginActivity.this, UserDetailsPref.HOSPITAL_ACCESS_PIN, jsonObj.getInt (AppConfigTags.HOSPITAL_ACCESS_PIN));
                                             userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.HOSPITAL_DEFAULT_PATIENT_ID, jsonObj.getString (AppConfigTags.HOSPITAL_DEFAULT_PATIENT_ID));
@@ -297,8 +299,13 @@ public class LoginActivity extends AppCompatActivity {
                 protected Map<String, String> getParams () throws AuthFailureError {
                     Map<String, String> params = new Hashtable<String, String> ();
                     params.put (AppConfigTags.USERNAME, username);
+//                    params.put (AppConfigTags.PASSWORD, Utils.encrypt (password));
                     params.put (AppConfigTags.PASSWORD, password);
-                    params.put (AppConfigTags.DEVICE_IDENTIICATION, android_id);
+                    params.put (AppConfigTags.DEVICE_IDENTIFICATION, android_id);
+                    params.put (AppConfigTags.DEVICE_API_LEVEL, String.valueOf (android.os.Build.VERSION.SDK_INT));
+                    params.put (AppConfigTags.DEVICE_OS_VERSION, android.os.Build.VERSION.RELEASE);
+                    params.put (AppConfigTags.DEVICE_MANUFACTURER, android.os.Build.MANUFACTURER);
+                    params.put (AppConfigTags.DEVICE_MODEL, android.os.Build.MODEL);
                     Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
                     return params;
                 }
@@ -437,6 +444,7 @@ public class LoginActivity extends AppCompatActivity {
                     Map<String, String> params = new Hashtable<String, String> ();
                     params.put (AppConfigTags.USERNAME, username);
                     params.put (AppConfigTags.PASSWORD, password);
+//                    params.put (AppConfigTags.PASSWORD, Utils.encrypt (password));
                     Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
                     return params;
                 }

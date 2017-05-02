@@ -22,6 +22,7 @@ public class Constants {
     public static String patient_id;
 
 
+    public static String encryption_key = "actipatient12345";
     public static String api_key = "9e3d710529e11ab2be4e39402ae544ce";
 //    public static String hospital_login_key = "9e3d710529e11ab2be4e39402ae544ce";
 

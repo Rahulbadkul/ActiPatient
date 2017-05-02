@@ -140,7 +140,12 @@ public class MainActivity extends AppCompatActivity {
         Bugsnag.init (this);
         userDetailPref = UserDetailsPref.getInstance ();
         progressDialog = new ProgressDialog (this);
-
+//        try {
+//            Log.e ("Karman Encrypt", "" + Utils.encrypt ("karman"));
+//            Log.e ("Karman Decrypt", "" + Utils.decrypt (Utils.encrypt ("karman")));
+//        } catch (Exception e) {
+//            e.printStackTrace ();
+//        }
         PackageInfo pInfo = null;
         try {
             pInfo = getPackageManager ().getPackageInfo (getPackageName (), 0);
